@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon magasin – Niveau 4 – CAP EPC – Isabelle LÉGER</title>
+<meta name="author" content="Isabelle LÉGER">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<script>
+  const NOM_ENSEIGNANTE = "Isabelle LÉGER";   // nom fixe
+  const CODE_PAR_DEFAUT = "EPC2026";         // code fixe de l'espace enseignante
+</script>
+<style>
+:root{
+  --teal:#0E5C63; --teal-d:#083E43; --yellow:#FFD43B; --yellow-d:#E8B800;
+  --tomato:#E5483B; --mint:#D9F2E6; --green:#1F8A4C; --bg:#EAF2F3; --ink:#17262A; --white:#fff; --line:#9BB8BB;
+  --title:"Fredoka","Trebuchet MS",Verdana,sans-serif;
+  --body:"Atkinson Hyperlegible",Verdana,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:20px;line-height:1.5}
+button{font-family:inherit;font-size:inherit;cursor:pointer;color:var(--ink)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid var(--yellow-d);outline-offset:3px}
+h1,h2,h3{font-family:var(--title);line-height:1.15;margin:0 0 .4em}
+h1{font-size:2rem} h2{font-size:1.65rem} h3{font-size:1.25rem}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 40px}
+
+.store-sign{background:var(--teal);color:var(--white);border-bottom:10px solid var(--yellow)}
+.store-sign .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+.store-sign h1{margin:0}
+.store-sign .who{font-size:1rem}
+.awning{height:22px;background:repeating-linear-gradient(90deg,var(--tomato) 0 40px,var(--white) 40px 80px);border-radius:0 0 18px 18px;margin:0 6px}
+
+.btn{border:none;border-radius:14px;padding:14px 22px;font-weight:700;background:var(--teal);color:var(--white);min-height:56px}
+.btn:hover{background:var(--teal-d)}
+.btn.yellow{background:var(--yellow);color:var(--ink)} .btn.yellow:hover{background:var(--yellow-d)}
+.btn.ghost{background:var(--white);color:var(--teal);border:3px solid var(--teal)}
+.btn.small{min-height:44px;padding:8px 14px;font-size:.9rem}
+.speak{border:none;background:var(--yellow);border-radius:50%;width:50px;height:50px;font-size:1.4rem;flex:none}
+.speak:hover{background:var(--yellow-d)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.panel{background:var(--white);border-radius:20px;padding:24px;margin-top:22px}
+.consigne{display:flex;gap:14px;align-items:flex-start;background:var(--mint);border-radius:16px;padding:16px;margin-bottom:18px}
+.consigne p{margin:0}
+.saved{position:fixed;bottom:16px;right:16px;background:var(--green);color:#fff;padding:10px 18px;border-radius:30px;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none}
+.saved.on{opacity:1}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;z-index:9;max-width:90%}
+
+.profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
+.profile{background:var(--white);border:4px solid var(--teal);border-radius:20px;padding:22px;text-align:center}
+.profile .big{font-size:3rem}
+.profile input{width:100%;font:inherit;padding:12px;border-radius:12px;border:3px solid var(--line);margin:10px 0;text-align:center}
+
+/* Plan du magasin */
+.home-grid{display:grid;grid-template-columns:1fr 290px;gap:22px;margin-top:22px;align-items:start}
+@media (max-width:860px){.home-grid{grid-template-columns:1fr}}
+.zone{background:var(--white);border-radius:20px;padding:20px;margin-bottom:20px;border-left:12px solid var(--zc,var(--teal))}
+.zone h3{margin-bottom:2px} .zone .zd{margin:0 0 12px;color:#3E5559;font-size:1rem}
+.aisles{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
+.aisle{position:relative;background:var(--bg);border:none;border-radius:16px;padding:0 0 12px;text-align:left;overflow:hidden;border-bottom:7px solid #C9D7D9}
+.aisle:hover{background:#DCEBEC}
+.aisle .ico{font-size:2.3rem;padding:8px 12px 0}
+.aisle .lbl{padding:0 12px;font-weight:700;line-height:1.2}
+.aisle .st{padding:2px 12px 0;font-size:.85rem;color:#3E5559}
+.aisle.done{border-bottom-color:var(--green)}
+.aisle.done::after{content:"✔";position:absolute;top:10px;right:10px;background:var(--green);color:#fff;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+
+.card{background:linear-gradient(135deg,var(--teal),#147A82);color:#fff;border-radius:22px;padding:20px;position:sticky;top:12px}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:14px 0}
+.stamp{aspect-ratio:1;border-radius:50%;border:2px dashed rgba(255,255,255,.6);display:grid;place-items:center;font-size:1.1rem}
+.stamp.on{background:var(--yellow);border:2px solid var(--yellow);transform:rotate(-12deg)}
+.card .count{font-family:var(--title);font-size:1.4rem}
+.mybadge{background:var(--white);color:var(--ink);border-radius:14px;padding:10px;text-align:center;margin-top:10px;border-top:14px solid var(--bc,var(--tomato))}
+
+/* Quiz */
+.question{font-size:1.25rem;font-weight:700;margin-bottom:14px}
+.opts{display:grid;gap:12px}
+.opt{text-align:left;background:var(--white);border:3px solid var(--line);border-radius:14px;padding:14px 18px;min-height:60px}
+.opt:hover{border-color:var(--teal)}
+.opt.good{background:#D7F5E2;border-color:var(--green)}
+.opt.bad{background:#FBDAD6;border-color:var(--tomato)}
+.feedback{margin-top:14px;padding:14px;border-radius:14px;font-weight:700}
+.feedback.good{background:#D7F5E2} .feedback.bad{background:#FBDAD6} .feedback.info{background:#FFF4C4}
+.progress{height:14px;background:#D5E3E5;border-radius:10px;overflow:hidden;margin-bottom:18px}
+.progress div{height:100%;background:var(--yellow-d)}
+.bigcard{background:var(--bg);border-radius:20px;padding:26px;text-align:center;font-size:1.5rem;font-weight:700;margin-bottom:16px}
+.bigcard .e{font-size:3.5rem;display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two .btn{font-size:1.15rem;min-height:72px}
+
+.missions{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.mission{background:var(--bg);border-radius:18px;padding:18px}
+.mission .ico{font-size:2.6rem}
+
+table.bl{width:100%;border-collapse:collapse;font-size:1.05rem}
+table.bl th{background:var(--teal);color:#fff;padding:10px;text-align:left}
+table.bl td{padding:0;border-bottom:2px solid #D5E3E5}
+table.bl td button{width:100%;text-align:left;background:none;border:none;padding:14px 10px;min-height:56px}
+table.bl tr.found td{background:#FBDAD6}
+table.bl tr.ok td{background:#E8F0F1}
+.tablebox{overflow-x:auto}
+
+.products{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.prod{background:var(--white);border:3px solid var(--line);border-radius:14px;padding:10px 14px;font-size:1.05rem;min-height:56px}
+.prod .e{font-size:1.6rem;margin-right:6px;vertical-align:middle}
+.prod.sel,.sel:not(.pcol){border-color:var(--yellow-d)!important;background:#FFF4C4!important;box-shadow:0 0 0 4px var(--yellow)}
+.shelves{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.shelf{background:var(--bg);border:none;border-radius:16px;padding:0 0 12px;min-height:150px;text-align:left;border-bottom:10px solid #8A6A4B}
+.shelf .sign{background:var(--teal);color:#fff;font-family:var(--title);padding:8px 12px;border-radius:16px 16px 0 0}
+.shelf .in{padding:8px 12px;font-size:1.7rem}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.today{display:inline-block;background:var(--tomato);color:#fff;padding:6px 14px;border-radius:10px;font-weight:700}
+.yogs{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.yog{background:var(--white);border:3px solid var(--line);border-radius:16px;padding:12px;width:150px;text-align:center}
+.yog .e{font-size:2.4rem}
+.yog .dlc{display:block;background:var(--ink);color:#fff;border-radius:8px;padding:4px;font-size:.95rem;margin-top:6px}
+.yog:disabled{opacity:.35;cursor:default}
+.slots{display:flex;gap:10px;flex-wrap:wrap}
+.slot{width:150px;min-height:110px;border:3px dashed var(--line);border-radius:16px;display:grid;place-items:center;text-align:center;padding:6px;background:var(--white)}
+.slot.fill{border-style:solid;border-color:var(--green);background:#D7F5E2}
+
+.ticket{background:#fff;border:2px dashed var(--line);border-radius:6px;padding:16px;max-width:360px;font-family:"Courier New",monospace}
+.ticket .tot{font-size:1.4rem;font-weight:700;border-top:2px dashed var(--line);margin-top:8px;padding-top:8px}
+.money{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.bill{border:none;border-radius:8px;width:110px;height:62px;font-weight:700;font-size:1.2rem}
+.coin{border:none;border-radius:50%;width:70px;height:70px;font-weight:700;font-size:1rem}
+.c-gold{background:radial-gradient(circle at 35% 35%,#FCE79A,#D9B13B)}
+.c-copper{background:radial-gradient(circle at 35% 35%,#F2C29B,#B8743F)}
+.c-bi{background:radial-gradient(circle,#E4C35A 0 45%,#C9CDD1 46%)}
+.b5{background:#C9CDD1} .b10{background:#F0B6A8}
+.tray{background:var(--mint);border-radius:16px;padding:14px;min-height:70px}
+.tray .sum{font-family:var(--title);font-size:1.5rem}
+
+.smileys{display:flex;gap:12px;flex-wrap:wrap}
+.smiley{font-size:2.4rem;background:var(--white);border:3px solid var(--line);border-radius:16px;width:80px;height:80px}
+.chip{background:var(--white);border:3px solid var(--line);border-radius:30px;padding:10px 18px;min-height:52px}
+textarea{width:100%;min-height:110px;font:inherit;padding:12px;border-radius:12px;border:3px solid var(--line)}
+
+/* Tenue */
+.dress{display:grid;grid-template-columns:220px 1fr;gap:20px}
+@media (max-width:700px){.dress{grid-template-columns:1fr}}
+.mannequin{background:var(--bg);border-radius:20px;padding:16px;text-align:center;font-size:2.6rem;line-height:1.25}
+.mannequin small{display:block;font-size:.85rem;color:#3E5559}
+
+/* Jeux de mots */
+.word{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+.word span{width:46px;height:58px;border-bottom:5px solid var(--teal);font-family:var(--title);font-size:2rem;display:grid;place-items:center;background:var(--bg);border-radius:8px 8px 0 0}
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px}
+.key{height:52px;border:2px solid var(--line);background:var(--white);border-radius:10px;font-weight:700;font-size:1.2rem}
+.key:disabled{opacity:.3}
+.key.g{background:#D7F5E2;opacity:1;border-color:var(--green)}
+.basket{font-size:2rem;text-align:center;background:var(--mint);border-radius:16px;padding:8px}
+.letters{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.letter{width:58px;height:62px;border:3px solid var(--line);background:#FFF4C4;border-radius:12px;font-family:var(--title);font-size:1.8rem}
+.letter:disabled{opacity:.25}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:560px;margin:0 auto}
+@media (max-width:500px){.mem{grid-template-columns:repeat(3,1fr)}}
+.mcard{aspect-ratio:1;border:none;border-radius:14px;background:var(--teal);color:#fff;font-size:1.05rem;font-weight:700;padding:6px}
+.mcard.open{background:#FFF4C4;color:var(--ink)} .mcard.open .e{font-size:2.4rem}
+.mcard.done{background:#D7F5E2;color:var(--ink)}
+.ws{display:grid;gap:3px;max-width:520px;margin:0 auto;user-select:none}
+.ws button{aspect-ratio:1;border:1px solid #C9D7D9;background:var(--white);border-radius:6px;font-family:var(--title);font-size:clamp(.85rem,3.2vw,1.35rem);padding:0}
+.ws button.start{background:var(--yellow)}
+.ws button.f{background:#B9E8CB}
+.wl{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;justify-content:center}
+.wl span{background:var(--bg);padding:6px 12px;border-radius:20px;font-weight:700}
+.wl span.f{text-decoration:line-through;background:#D7F5E2}
+
+/* Erreurs du rayon */
+.gond{background:#8A6A4B;border-radius:16px;padding:10px;max-width:640px;margin:0 auto}
+.etage{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;background:#F3EDE4;padding:8px;border-bottom:8px solid #6B4F36;margin-bottom:8px}
+.etage button,.floor button{border:none;background:none;font-size:2rem;padding:4px;min-height:64px;border-radius:10px}
+.etage button small,.floor button small{display:block;font-size:.7rem;background:var(--yellow);border-radius:4px;font-weight:700}
+.etage button.hit,.floor button.hit{background:#FBDAD6;outline:3px solid var(--tomato)}
+.floor{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:4px 8px}
+
+/* Coloriage */
+.palette{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pcol{width:48px;height:48px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line)}
+.pcol.sel{box-shadow:0 0 0 5px var(--ink)}
+.colorbox{max-width:620px;margin:0 auto}
+.colorbox svg{width:100%;height:auto;background:#fff;border-radius:12px;border:3px solid var(--line)}
+.colorbox svg [data-r]{cursor:pointer}
+.svgline{pointer-events:none}
+
+.result{text-align:center}
+.result .stars{font-size:3.4rem;letter-spacing:.1em}
+.burst{position:fixed;pointer-events:none;font-size:2rem;animation:fly 1.4s ease-out forwards;z-index:10}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(260deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.shake,.burst{animation:none}}
+
+.tch table{width:100%;border-collapse:collapse;font-size:.95rem}
+.tch th,.tch td{border:1px solid #C9D7D9;padding:8px;text-align:left;vertical-align:top}
+.tch th{background:var(--teal);color:#fff}
+.tch tr.z td{background:var(--bg);font-weight:700}
+.tch details{margin-top:6px} .tch summary{cursor:pointer;color:var(--teal);font-weight:700}
+.tch input{font:inherit;padding:10px;border-radius:10px;border:3px solid var(--line)}
+.tch svg{width:160px;height:auto;border:1px solid #C9D7D9}
+#tlayer{position:fixed;inset:0;background:rgba(23,38,42,.65);z-index:20;overflow:auto;padding:20px}
+#tlayer .panel{max-width:1050px;margin:0 auto 20px}
+.stu{border:3px solid var(--line);background:var(--white);border-radius:12px;padding:8px 14px;font-weight:700}
+.stu.sel{border-color:var(--teal)!important;background:var(--mint)!important;box-shadow:none}
+.live{background:#FFF4C4;border-radius:8px;padding:4px 8px;display:inline-block;margin-top:4px}
+.etage button.back{opacity:.28;transform:scale(.6)}
+.etq{display:inline-block;background:#fff;border:3px solid var(--ink);border-radius:10px;padding:12px 18px;min-width:250px;margin-bottom:14px;text-align:left}
+.etq .nm{font-weight:700;font-size:1.1rem} .etq .px{font-family:var(--title);font-size:2.4rem;color:var(--tomato);line-height:1.1}
+.etq .old{text-decoration:line-through;color:#5B6C70;font-size:1.2rem} .etq .pu{font-size:.95rem} .etq .bc{letter-spacing:1px;font-size:.8rem;margin-top:6px}
+.balis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.bcard{background:#fff;border:3px solid var(--line);border-radius:14px;padding:10px;font-size:2.6rem;text-align:center}
+.bcard .mini{font-size:.9rem;background:#FFF4C4;border-radius:6px;padding:4px;margin-top:6px;min-height:46px}
+.bcard .mini.none{background:#eee;color:#5B6C70}
+.bcard.hit{border-color:var(--tomato);background:#FBDAD6}
+.cnt{display:grid;grid-template-columns:repeat(5,64px);gap:8px}
+.cnt button{font-size:2.1rem;height:64px;border:2px solid var(--line);background:#fff;border-radius:12px;position:relative;padding:0}
+.cnt button.c{background:#D7F5E2;border-color:var(--green)}
+.cnt button.c::after{content:"✔";position:absolute;top:-8px;right:-8px;background:var(--green);color:#fff;border-radius:50%;width:24px;height:24px;font-size:.8rem;display:grid;place-items:center}
+.rs{display:grid;grid-template-columns:repeat(5,60px);gap:8px}
+.rs div{height:60px;border-radius:10px;display:grid;place-items:center;font-size:2rem;background:#fff;border:2px solid var(--line)}
+.rs div.vide{border:3px dashed var(--tomato);background:var(--bg)}
+.b20{background:#9EC9E8}
+.poster{width:260px;aspect-ratio:3/4;border-radius:16px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;font-family:var(--title);font-size:20px;box-shadow:0 6px 0 rgba(0,0,0,.15)}
+.poster.sm{width:130px;font-size:10px;padding:9px 6px}
+.poster .pt{font-size:1.9em;font-weight:700;line-height:1.1} .poster .pe{font-size:4.5em;line-height:1} .poster .pn{font-size:1.3em}
+.poster .pp{font-size:2.3em;font-weight:700;background:#fff;color:var(--tomato);border-radius:12px;padding:0 .4em}
+.chat{display:flex;flex-direction:column;gap:10px}
+.bub{max-width:85%;padding:12px 14px;border-radius:18px;font-size:1.05rem}
+.bub .speak{width:38px;height:38px;font-size:1rem;vertical-align:middle;margin-left:6px}
+.bub.c{background:var(--bg);align-self:flex-start;border-bottom-left-radius:4px}
+.bub.m{background:#D7F5E2;align-self:flex-end;border-bottom-right-radius:4px}
+.bub.n{align-self:center;background:#FFF4C4;font-style:italic;max-width:100%}
+.bub .who{display:block;font-size:.85rem;font-weight:700;color:#3E5559}
+.plan{border-collapse:collapse;margin-bottom:14px;font-size:1.05rem}
+.plan th{background:var(--teal);color:#fff;padding:6px 12px}.plan td{border:2px solid #D5E3E5;padding:6px 12px}
+.plan tr.off td{background:#FFF4C4}
+.bki{display:inline-flex;align-items:center;gap:6px;background:#fff;border-radius:10px;padding:4px 8px;margin:4px}
+.okl{color:var(--green);font-weight:700}
+.flat{display:flex;flex-wrap:wrap;gap:6px;font-size:2rem;max-width:560px}
+.ctn{border:3px dashed #8A6A4B;border-radius:10px;padding:4px 8px;font-size:1.5rem;background:#F3EDE4}
+.fiche{display:flex;gap:16px;align-items:flex-start;background:#fff;border:4px solid var(--fc,var(--teal));border-radius:16px;padding:16px;max-width:540px}
+.fiche .fa{font-size:4rem;line-height:1}.fiche .fn{font-family:var(--title);font-size:1.6rem}
+.fiche.sm{font-size:.8rem;padding:8px;gap:8px}.fiche.sm .fa{font-size:2rem}.fiche.sm .fn{font-size:1rem}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#C9D7D9;padding:10px;border-radius:16px;max-width:720px}
+.zbtn{background:#fff;border:3px solid var(--line);border-radius:12px;min-height:86px;font-size:.9rem;font-weight:700;padding:6px;line-height:1.2}
+.zbtn .e{display:block;font-size:2rem}
+.zbtn.good{background:#D7F5E2;border-color:var(--green)}.zbtn.bad{background:#FBDAD6;border-color:var(--tomato)}
+.tline{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;max-width:680px}
+.tline div{height:56px;border-radius:6px;background:#E8F0F1;display:flex;align-items:flex-end;justify-content:center;font-size:.72rem;padding-bottom:3px}
+.tline div.w{background:var(--yellow);border:2px solid var(--yellow-d)}
+.ticket{max-width:470px}
+.msgcard{background:#fff;border:3px dashed var(--line);border-radius:12px;padding:16px;margin-top:16px}
+.mag{max-width:460px;background:#fff;border:4px solid var(--mc);border-radius:16px;overflow:hidden;text-align:center;padding-bottom:14px}
+.mag .aw{height:34px;background:repeating-linear-gradient(90deg,var(--mc) 0 34px,#fff 34px 68px)}
+.mag .mn{font-family:var(--title);font-size:1.9rem;background:var(--mc);color:#fff;margin:12px 16px 6px;border-radius:10px;padding:6px}
+.mag .mt{font-weight:700}.mag .ms{font-style:italic;margin:6px}
+.mag .mr span{display:inline-block;background:var(--bg);border-radius:20px;padding:4px 10px;margin:3px;font-size:.9rem}
+.mag.sm{max-width:220px;font-size:.75rem;padding-bottom:6px}.mag.sm .mn{font-size:1rem;margin:6px}.mag.sm .aw{height:14px}.mag.sm .mr span{font-size:.7rem}
+footer{text-align:center;font-size:.9rem;color:#3E5559;padding:20px}
+@media print{.store-sign,.awning,footer,.noprint{display:none}.panel{padding:0}body.tl main{display:none}body.tl #tlayer{position:static;background:none;padding:0}}
+</style>
+</head>
+<body>
+<header class="store-sign">
+  <div class="wrap">
+    <h1>🛒 Mon magasin EPC <span style="background:var(--yellow);color:var(--ink);border-radius:10px;padding:2px 10px;font-size:1.1rem;vertical-align:middle">Niveau 4</span></h1>
+    <div class="row"><div class="who" id="who"></div><button class="btn yellow small" id="mute" onclick="toggleMute()" aria-pressed="false">🔊 Son activé</button><button class="btn ghost small" onclick="openTeacher()">🔒 Espace enseignante</button></div>
+  </div>
+</header>
+<div class="wrap"><div class="awning" aria-hidden="true"></div></div>
+<main class="wrap" id="app"></main>
+<footer id="foot"></footer>
+<div class="saved" id="saved" role="status">Enregistré ✔</div>
+<div id="tlayer" hidden></div>
+
+<script>
+const KEY = "epc_immersion_niveau4";
+let state = load();
+let cur = null;
+const app = document.getElementById("app");
+
+/* ================= Sauvegarde ================= */
+function newStudent(name){ return {name:name||"",results:{},avis:null,badge:null,colors:{},progress:{}}; }
+function blank(){ return {teacher:NOM_ENSEIGNANTE, code:CODE_PAR_DEFAUT, students:{}}; }
+function load(){
+  try{ const s = JSON.parse(localStorage.getItem(KEY));
+    if(s && s.students){ const out={}; for(const [k,v] of Object.entries(s.students)) if(v && v.name) out[k]=Object.assign(newStudent(), v); s.students=out;
+      if(!s.teacher) s.teacher = NOM_ENSEIGNANTE; return s; } }catch(e){}
+  return blank();
+}
+function save(show=true){
+  try{ localStorage.setItem(KEY, JSON.stringify(state));
+    if(show){ const el=document.getElementById("saved"); el.classList.add("on"); setTimeout(()=>el.classList.remove("on"),1500); }
+  }catch(e){ alert("Attention : l'enregistrement n'a pas fonctionné sur cet ordinateur."); }
+}
+const esc = t => String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+const pickN = (a,n) => shuffle(a).slice(0,n);
+function teacherLabel(){ return "Proposé par " + esc(NOM_ENSEIGNANTE); }
+function refreshHeader(){
+  document.getElementById("who").innerHTML = teacherLabel() + (cur ? " &nbsp;|&nbsp; Élève : <b>" + esc(state.students[cur].name) + "</b>" : "");
+  document.getElementById("foot").innerHTML = "Niveau 4 – Découverte du CAP Équipier polyvalent du commerce – " + teacherLabel();
+}
+let curAct=null;
+function live(details){ if(!cur||!curAct||!state.students[cur]) return;
+  state.students[cur].progress[curAct]={details:[...details], date:new Date().toLocaleString("fr-FR")}; save(false); }
+function track(arr){ arr.push=function(...a){ const r=Array.prototype.push.apply(this,a); live(this); return r; }; return arr; }
+const norm = t => String(t).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function toast(t){ const d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),5000); }
+
+/* ================= Lecture à voix haute =================
+   Correction : le texte est rangé dans data-say (plus de bug avec les apostrophes). */
+let voiceWarned=false;
+function speak(t){
+  if(state.mute) return;
+  if(!("speechSynthesis" in window)){ if(!voiceWarned){ toast("La lecture à voix haute n'est pas disponible dans ce navigateur."); voiceWarned=true; } return; }
+  const clean = String(t).replace(/\p{Extended_Pictographic}|\uFE0F|\u200D/gu,"").replace(/_+/g," ");
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(clean); u.lang="fr-FR"; u.rate=.9;
+  const v = speechSynthesis.getVoices().find(v=>v.lang && v.lang.toLowerCase().startsWith("fr"));
+  if(v) u.voice=v;
+  else if(!voiceWarned && speechSynthesis.getVoices().length){ toast("Aucune voix française n'est installée sur cet ordinateur."); voiceWarned=true; }
+  speechSynthesis.speak(u);
+}
+if("speechSynthesis" in window) speechSynthesis.getVoices();
+document.addEventListener("click", e=>{ const b=e.target.closest("[data-say]"); if(!b) return;
+  if(state.mute && b.classList.contains("speak")) toast("Le son est coupé. Clique sur « 🔇 Son coupé » en haut pour le remettre.");
+  speak(b.dataset.say); });
+function drawMute(){ const b=document.getElementById("mute"); if(!b) return;
+  b.textContent = state.mute ? "🔇 Son coupé" : "🔊 Son activé";
+  b.className = "btn small " + (state.mute ? "ghost" : "yellow");
+  b.setAttribute("aria-pressed", state.mute ? "true" : "false"); }
+function toggleMute(){
+  state.mute = !state.mute;
+  if(state.mute && "speechSynthesis" in window) speechSynthesis.cancel();
+  save(false); drawMute();
+  if(!state.mute) speak("Le son est activé.");
+}
+const sayBtn = t => `<button class="speak" data-say="${esc(t)}" aria-label="Écouter">🔊</button>`;
+const consigne = t => `<div class="consigne">${sayBtn(t)}<p>${t}</p></div>`;
+
+/* ================= Vocabulaire niveau 4 ================= */
+const VOCAB = [
+  {w:"ENSEIGNE",d:"Enseigne",e:"🏪",def:"Le nom du magasin, écrit en grand sur la façade."},
+  {w:"SUPERETTE",d:"Supérette",e:"🏠",def:"Un petit magasin de quartier, avec peu de rayons."},
+  {w:"HYPERMARCHE",d:"Hypermarché",e:"🏬",def:"Un très grand magasin, avec beaucoup de rayons différents."},
+  {w:"ACCUEIL",d:"Accueil",e:"💁",def:"L'endroit à l'entrée du magasin où l'on renseigne les clients."},
+  {w:"MESSAGE",d:"Message",e:"📩",def:"Ce que j'écris pour une personne qui n'est pas là quand on l'appelle."},
+  {w:"AFFICHE",d:"Affiche",e:"🪧",def:"Une grande feuille qui montre une information ou une promotion."},
+  {w:"CABINE",d:"Cabine",e:"🚪",def:"Le petit endroit fermé où le client essaie les vêtements."},
+  {w:"TAILLE",d:"Taille",e:"👕",def:"Elle dit si un vêtement est petit, moyen ou grand : S, M, L…"},
+  {w:"ANTIVOL",d:"Antivol",e:"🚨",def:"Le petit objet qui sonne si quelqu'un sort sans payer."},
+  {w:"TERMINAL",d:"Terminal",e:"💳",def:"L'appareil où le client paie avec sa carte bancaire."},
+  {w:"PAUSE",d:"Pause",e:"☕",def:"Le moment où j'arrête de travailler pour me reposer ou manger."},
+  {w:"EQUIPE",d:"Équipe",e:"👥",def:"Toutes les personnes qui travaillent ensemble dans le magasin."},
+  {w:"HORAIRES",d:"Horaires",e:"⏰",def:"Les heures où je commence et où je finis le travail."},
+  {w:"TENUE",d:"Tenue",e:"👔",def:"Les vêtements que je porte pour travailler."},
+  {w:"SECURITE",d:"Sécurité",e:"🦺",def:"Faire attention pour que personne ne se blesse."},
+  {w:"HYGIENE",d:"Hygiène",e:"🧼",def:"Être propre et garder le magasin propre : se laver les mains, nettoyer."},
+];
+
+/* ================= Activités ================= */
+const ZONES = [
+  {id:"z1", t:"Zone 1 – Le magasin et ma journée", d:"Les types de magasins, le plan, l'hygiène, une journée de travail.", c:"#E5483B"},
+  {id:"z2", t:"Zone 2 – Les mots du pro (niveau 4)", d:"Encore de nouveaux mots du commerce.", c:"#E8B800"},
+  {id:"z3", t:"Zone 3 – Les missions niveau 4", d:"Vêtements, promotions, heures de travail, téléphone, caisse…", c:"#0E5C63"},
+  {id:"z4", t:"Zone 4 – La pause créative", d:"Coloriages et mon magasin idéal.", c:"#7A4FB5"},
+  {id:"z5", t:"Zone 5 – Le grand défi", d:"Le quiz final, puis mon avis.", c:"#1F8A4C"},
+];
+const ACTS = [
+  {id:"types",     z:"z1", ico:"🏪", lbl:"Les types de magasins", run:actTypes},
+  {id:"plan",      z:"z1", ico:"🗺️", lbl:"Le plan du magasin",   run:actPlan},
+  {id:"hygiene",   z:"z1", ico:"🧼", lbl:"L'hygiène",            run:actHygiene},
+  {id:"journee",   z:"z1", ico:"☀️", lbl:"Une journée au magasin", run:actJournee},
+  {id:"devinette", z:"z2", ico:"❓", lbl:"Qui suis-je ?",        run:actDevinette},
+  {id:"mystere",   z:"z2", ico:"🧺", lbl:"Le mot mystère",       run:actMystere},
+  {id:"ecoute",    z:"z2", ico:"🎧", lbl:"Écoute et écris",      run:actEcoute},
+  {id:"trous",     z:"z2", ico:"✏️", lbl:"Les phrases à trous",  run:actTrous},
+  {id:"memory",    z:"z2", ico:"🃏", lbl:"Le jeu des paires",    run:actMemory},
+  {id:"motsmeles", z:"z2", ico:"🔍", lbl:"Mots mêlés géants",    run:actMotsMeles},
+  {id:"ordre",     z:"z3", ico:"🔢", lbl:"Remettre dans l'ordre", run:actOrdre4},
+  {id:"tailles",   z:"z3", ico:"📏", lbl:"Du plus petit au plus grand", run:actTailles},
+  {id:"textile",   z:"z3", ico:"👕", lbl:"Le rayon vêtements",   run:actTextile},
+  {id:"vente",     z:"z3", ico:"💬", lbl:"Conseiller un client", run:actVente4},
+  {id:"promos",    z:"z3", ico:"🏷️", lbl:"Promos et soldes",     run:actPromos},
+  {id:"heures",    z:"z3", ico:"⏱️", lbl:"Compter mes heures",   run:actHeures},
+  {id:"message",   z:"z3", ico:"📝", lbl:"Prendre un message",   run:actMessage},
+  {id:"caisse",    z:"z3", ico:"💶", lbl:"La caisse niveau 4",   run:actCaisse},
+  {id:"col_vetements", z:"z4", ico:"👗", lbl:"Colorie la boutique de vêtements", run:()=>actColor("col_vetements")},
+  {id:"col_boulangerie", z:"z4", ico:"🥐", lbl:"Colorie la boulangerie", run:()=>actColor("col_boulangerie")},
+  {id:"monmag",    z:"z4", ico:"🏬", lbl:"Mon magasin idéal",    run:actMonMag},
+  {id:"defi",      z:"z5", ico:"🏆", lbl:"Le grand défi",        run:actDefi},
+  {id:"avis",      z:"z5", ico:"📝", lbl:"Mon avis",             run:actAvis},
+];
+const isDone = (st,a) => a.id==="avis" ? !!st.avis : !!st.results[a.id];
+
+/* ================= Écran : choix de l'élève ================= */
+function screenLogin(){
+  cur=null; curAct=null; refreshHeader(); if("speechSynthesis" in window) speechSynthesis.cancel();
+  app.innerHTML = `
+  <div class="panel" style="max-width:640px;margin:22px auto 0;text-align:center">
+    <div style="font-size:3.5rem">🧑‍💼</div>
+    <h2>Bienvenue dans le magasin ! 👋</h2>
+    ${consigne("Tu vas découvrir le métier d'équipier du commerce. Écris ton prénom, puis clique sur J'entre. Si tu as déjà commencé, écris le même prénom : tu retrouves ton travail.")}
+    <label for="pn"><b>Mon prénom</b></label>
+    <input id="pn" autocomplete="off" style="display:block;width:100%;font:inherit;font-size:1.4rem;padding:14px;border-radius:14px;border:3px solid var(--line);margin:10px 0 16px;text-align:center">
+    <button class="btn yellow" id="go" style="font-size:1.2rem">J'entre dans le magasin 🛒</button>
+  </div>`;
+  const inp=document.getElementById("pn"); inp.focus();
+  inp.onkeydown=e=>{ if(e.key==="Enter") enter(); };
+  document.getElementById("go").onclick=enter;
+}
+function enter(){
+  const v=(document.getElementById("pn").value||"").trim();
+  if(!v){ alert("Écris ton prénom d'abord 🙂"); return; }
+  let k=Object.keys(state.students).find(k=>norm(state.students[k].name)===norm(v));
+  if(!k){ k="s"+Date.now(); state.students[k]=newStudent(v); save(); }
+  cur=k; screenHome();
+}
+
+/* ================= Écran : plan du magasin ================= */
+function badgeHTML(st){ const b=st.badge; if(!b) return "";
+  return `<div class="mybadge" style="--bc:${b.color}"><div style="font-size:2rem">${b.emoji}</div><b>${esc(st.name)}</b><br><small>Équipier stagiaire</small></div>`; }
+function screenHome(){
+  curAct=null; refreshHeader(); window.scrollTo(0,0);
+  const st = state.students[cur]; const done = ACTS.filter(a=>isDone(st,a)).length;
+  app.innerHTML = `
+  <div class="home-grid">
+    <div>
+      <div class="panel" style="margin-top:0;margin-bottom:20px">
+        <h2>Bonjour ${esc(st.name)} !</h2>
+        ${consigne("Voici le plan du magasin. Commence par la zone 1. Clique sur une case pour jouer. À chaque jeu terminé, tu gagnes un tampon sur ta carte de fidélité. Tu peux rejouer autant de fois que tu veux.")}
+      </div>
+      ${ZONES.map(z=>`<section class="zone" style="--zc:${z.c}">
+        <h3>${z.t}</h3><p class="zd">${z.d}</p>
+        <div class="aisles">
+          ${ACTS.filter(a=>a.z===z.id).map(a=>{ const r=st.results[a.id]; const ok=isDone(st,a);
+            const sub = !ok ? "À faire" : (a.id==="avis"||a.z==="z4"||a.id==="badge") ? "Terminé" : `Terminé – ${r.best} / ${r.max}`;
+            return `<button class="aisle ${ok?"done":""}" onclick="openAct('${a.id}')"><div class="ico">${a.ico}</div><div class="lbl">${a.lbl}</div><div class="st">${sub}</div></button>`;}).join("")}
+        </div></section>`).join("")}
+    </div>
+    <aside class="card" aria-label="Ma carte de fidélité">
+      <h3>💳 Ma carte de fidélité</h3>
+      <div>${esc(st.name)}</div>
+      <div class="stamps">${ACTS.map(a=>`<div class="stamp ${isDone(st,a)?"on":""}" title="${esc(a.lbl)}">${isDone(st,a)?"⭐":a.ico}</div>`).join("")}</div>
+      <div class="count">${done} / ${ACTS.length} tampons</div>
+      ${done===ACTS.length?`<p>🏆 Bravo ! Tu as tout terminé !</p><button class="btn yellow small" onclick="screenDiplome()">🎓 Mon diplôme</button>`:`<p>Encore ${ACTS.length-done} jeu${ACTS.length-done>1?"x":""} à découvrir.</p>`}
+      ${badgeHTML(st)}
+      <button class="btn ghost small" style="margin-top:12px" onclick="screenLogin()">Ce n'est pas moi</button>
+    </aside>
+  </div>`;
+}
+function openAct(id){ curAct=id; if("speechSynthesis" in window) speechSynthesis.cancel(); const a = ACTS.find(x=>x.id===id); app.innerHTML=""; a.run(); window.scrollTo(0,0); }
+const actHeader = (title, ico) => `<div class="row" style="justify-content:space-between"><h2>${ico} ${title}</h2><button class="btn ghost small" onclick="screenHome()">⬅ Retour au magasin</button></div>`;
+
+function finish(id, score, max, details, msgOverride, extra){
+  const st = state.students[cur]; const prev = st.results[id]; delete st.progress[id]; curAct=null;
+  st.results[id] = { score, max, best: Math.max(score, prev?prev.best:0), attempts:(prev?prev.attempts:0)+1,
+                     date:new Date().toLocaleString("fr-FR"), details };
+  save();
+  const ratio = score/max; const stars = ratio>=.99?3: ratio>=.6?2: 1;
+  const msg = msgOverride || (stars===3?"Parfait ! Tu es un vrai équipier !": stars===2?"Très bien ! Tu as presque tout trouvé.":"Bien essayé ! Tu peux recommencer pour gagner plus d'étoiles.");
+  app.innerHTML = `<div class="panel result">
+    <h2>Jeu terminé ! Tampon gagné ⭐</h2>
+    <div class="stars" aria-label="${stars} étoiles sur 3">${"⭐".repeat(stars)}${"☆".repeat(3-stars)}</div>
+    ${msgOverride?"":`<p style="font-size:1.4rem"><b>${score} / ${max}</b></p>`}
+    <p>${msg} ${sayBtn(msg)}</p>
+    <div class="row" style="justify-content:center">
+      <button class="btn yellow" onclick="screenHome()">🛒 Retour au magasin</button>
+      <button class="btn ghost" onclick="openAct('${id}')">🔁 Rejouer</button>
+    </div>${extra||""}</div>`;
+  window.scrollTo(0,0); speak(msg); if(stars>=2) burst();
+}
+function burst(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const em=["⭐","🛒","🎉","💶","🥳"];
+  for(let i=0;i<22;i++){ const s=document.createElement("span"); s.className="burst"; s.textContent=em[i%em.length];
+    s.style.left="50%"; s.style.top="40%"; s.style.setProperty("--dx",(Math.random()*700-350)+"px"); s.style.setProperty("--dy",(Math.random()*500-300)+"px");
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1500); }
+}
+
+/* ================= Moteur de quiz ================= */
+function runQuiz(box, questions, onEnd, keepOrder){
+  let i=0, score=0; const details=track([]);
+  function show(){
+    const q = questions[i]; let opts = q.opts.map((t,k)=>({t,ok:k===q.good})); if(!keepOrder) opts=shuffle(opts);
+    box.innerHTML = `<div class="progress"><div style="width:${i/questions.length*100}%"></div></div>
+      <p style="margin:0 0 6px;color:#3E5559">Question ${i+1} sur ${questions.length}</p>${q.pre||""}
+      <div class="row" style="align-items:flex-start;flex-wrap:nowrap">${sayBtn(q.q+" "+opts.map(o=>o.t).join(". "))}
+      <div class="question">${q.q}</div></div>
+      <div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join("")}</div><div id="fb"></div>`;
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      const o = opts[+b.dataset.k];
+      box.querySelectorAll(".opt").forEach((x,k)=>{ x.disabled=true; if(opts[k].ok) x.classList.add("good"); });
+      if(!o.ok) b.classList.add("bad"); else score++;
+      details.push(`${q.q.replace(/<[^>]+>/g,"")} → « ${o.t} » ${o.ok?"✔":"✘"}`);
+      const fbText = (o.ok?"Bravo ! ":"Ce n'est pas ça. ") + (q.explain||"");
+      box.querySelector("#fb").innerHTML = `<div class="feedback ${o.ok?"good":"bad"}">${o.ok?"✅":"❌"} ${fbText}</div>`;
+      speak(fbText);
+      setTimeout(()=>{ if(!box.isConnected) return; i++; i<questions.length? show() : onEnd(score, details); }, o.ok?1800:3500);
+    });
+  }
+  show();
+}
+
+/* ================= Moteur de dialogue ================= */
+function dialogue(o){
+  let i=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader(o.title,o.ico)}${consigne(o.cons)}<div class="chat" id="chat"></div><div id="ch"></div></div>`;
+  const chat=document.getElementById("chat"), ch=document.getElementById("ch");
+  const bub=(cls,who,t)=>chat.insertAdjacentHTML("beforeend",`<div class="bub ${cls}">${who?`<span class="who">${who}</span>`:""}${t}${cls!=="n"?sayBtn(t):""}</div>`);
+  function step(){
+    if(!chat.isConnected) return;
+    const S=o.steps[i]; if(S.n) bub("n","",S.n); if(S.c) bub("c",S.who||o.who,S.c);
+    speak([S.n,S.c].filter(Boolean).join(" "));
+    const opts=shuffle(S.opts.map((t,k)=>({t,ok:k===0})));
+    ch.innerHTML=`<p style="margin:14px 0 8px"><b>💬 Que dis-tu ?</b></p><div class="opts">${opts.map((x,k)=>`<button class="opt" data-k="${k}">${x.t}</button>`).join("")}</div><div id="fb"></div>`;
+    ch.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      const x=opts[+b.dataset.k];
+      ch.querySelectorAll(".opt").forEach((y,k)=>{ y.disabled=true; if(opts[k].ok) y.classList.add("good"); });
+      if(x.ok) score++; else b.classList.add("bad");
+      det.push(`${S.c||S.n} → « ${x.t} » ${x.ok?"✔":"✘"}`);
+      const t=(x.ok?"Bravo ! ":"Ce n'est pas la meilleure réponse. ")+(S.ex||"");
+      ch.querySelector("#fb").innerHTML=`<div class="feedback ${x.ok?"good":"bad"}">${x.ok?"✅":"❌"} ${t}</div>`; speak(t);
+      setTimeout(()=>{ if(!chat.isConnected) return; bub("m","🧑‍💼 Moi",S.opts[0]); ch.innerHTML=""; i++;
+        if(i<o.steps.length) setTimeout(step,600); else setTimeout(()=>{ if(chat.isConnected) finish(o.id,score,o.steps.length,det); },1400); }, x.ok?2000:3800);
+    });
+  }
+  step();
+}
+
+/* ================= Moteur « bien / pas bien » ================= */
+function yesNo(o){
+  const items=shuffle(o.items); let i=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader(o.title,o.ico)}${consigne(o.cons)}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function show(){
+    const it=items[i];
+    g.innerHTML=`<div class="progress"><div style="width:${i/items.length*100}%"></div></div>
+      <div class="bigcard"><span class="e">${it[0]}</span>${it[1]} ${sayBtn(it[1])}</div>
+      <div class="two"><button class="btn" style="background:var(--green)" data-v="1">${o.yes}</button><button class="btn" style="background:var(--tomato)" data-v="0">${o.no}</button></div><div id="fb"></div>`;
+    g.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{
+      const ok=+b.dataset.v===it[2]; if(ok) score++;
+      det.push(`${it[1]} → ${b.dataset.v==="1"?"oui":"non"} ${ok?"✔":"✘"}`);
+      g.querySelectorAll("[data-v]").forEach(x=>x.disabled=true);
+      const t=(ok?"Bravo ! ":"Non. ")+(it[3]||"");
+      g.querySelector("#fb").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"✅":"❌"} ${t}</div>`; speak(t);
+      setTimeout(()=>{ if(!g.isConnected) return; i++; i<items.length?show():finish(o.id,score,items.length,det); }, ok?1800:3500);
+    });
+  }
+  show();
+}
+
+/* ================= ZONE 1 ================= */
+function actTypes(){
+  const Q=[
+    {q:"🏠 Un tout petit magasin de quartier, avec peu de rayons, c'est :", opts:["Une supérette","Un hypermarché","Un entrepôt"], good:0},
+    {q:"🏬 Un très grand magasin, avec de la nourriture, des vêtements, des jouets et de l'électroménager, c'est :", opts:["Un hypermarché","Une supérette","Une boulangerie"], good:0},
+    {q:"👟 Un magasin qui vend un seul type de produits (par exemple seulement du sport), c'est :", opts:["Un magasin spécialisé","Un hypermarché","Un drive"], good:0},
+    {q:"🚗 Le client commande sur internet et vient chercher ses courses en voiture. C'est :", opts:["Un drive","Une supérette","Un marché"], good:0},
+    {q:"🪧 Le nom du magasin, écrit en grand sur la façade, c'est :", opts:["L'enseigne","Le ticket","Le linéaire"], good:0},
+    {q:"🍽️ Une entreprise qui vend surtout aux professionnels (restaurants, commerçants), c'est :", opts:["Le commerce de gros","Une supérette","Un drive"], good:0},
+    {q:"⛺ Des commerçants qui vendent dehors, sur des étals, c'est :", opts:["Le marché","L'hypermarché","Le drive"], good:0},
+    {q:"🧑‍💼 Où un équipier du commerce peut-il travailler ?", opts:["Dans tous ces magasins","Seulement dans un hypermarché","Seulement au drive"], good:0, explain:"Supérette, supermarché, hypermarché, magasin spécialisé, drive : il y a beaucoup de possibilités !"},
+  ];
+  app.innerHTML=`<div class="panel">${actHeader("Les types de magasins","🏪")}${consigne("Il existe beaucoup de sortes de magasins. Trouve la bonne réponse.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("types",s,Q.length,d));
+}
+
+function actPlan(){
+  const Z=[["🍎","Fruits et légumes"],["🥖","Boulangerie"],["🧀","Produits frais"],["🧊","Surgelés"],["🍝","Épicerie"],["🥤","Boissons"],["🧴","Hygiène"],["🧽","Entretien"],["💁","Accueil"],["🧾","Caisses"],["🚪","Entrée"],["🟩","Sortie de secours"]];
+  const POOL=[["🧴 Un client cherche du shampooing.",6],["🥛 Une cliente cherche des yaourts.",2],["🥖 Un client veut une baguette.",1],["🍦 Une cliente cherche des glaces.",3],
+    ["🍚 Un client cherche du riz.",4],["💧 Une cliente cherche de l'eau.",5],["🍌 Un client cherche des bananes.",0],["🧺 Une cliente cherche de la lessive.",7],
+    ["💳 Un client a fini ses courses et veut payer.",9],["🧒 Un enfant a perdu sa maman.",8,"À l'accueil, on peut faire une annonce pour retrouver ses parents."],
+    ["🔥 L'alarme incendie sonne. Par où on sort ?",11],["🔄 Un client veut échanger un produit.",8,"Dans beaucoup de magasins, les échanges se font à l'accueil."]];
+  const Q=pickN(POOL,10); let i=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader("Le plan du magasin","🗺️")}
+    ${consigne("Voici le plan du magasin. Lis la situation, puis clique sur le bon endroit du plan.")}
+    <div id="qq"></div>
+    <div class="map">${Z.map((z,k)=>`<button class="zbtn" data-k="${k}"><span class="e">${z[0]}</span>${z[1]}</button>`).join("")}</div><div id="fb"></div></div>`;
+  const zb=[...app.querySelectorAll(".zbtn")];
+  function show(){
+    const q=Q[i]; zb.forEach(b=>{ b.classList.remove("good","bad"); b.disabled=false; });
+    document.getElementById("qq").innerHTML=`<div class="progress"><div style="width:${i/Q.length*100}%"></div></div><p style="margin:0 0 4px;color:#3E5559">Situation ${i+1} sur ${Q.length}</p><div class="row" style="flex-wrap:nowrap;margin-bottom:12px">${sayBtn(q[0])}<div class="question" style="margin:0">${q[0]}</div></div>`;
+    document.getElementById("fb").innerHTML=""; speak(q[0]);
+  }
+  zb.forEach(b=>b.onclick=()=>{
+    const q=Q[i], k=+b.dataset.k, ok=k===q[1]; if(ok) score++;
+    zb.forEach(x=>x.disabled=true); zb[q[1]].classList.add("good"); if(!ok) b.classList.add("bad");
+    det.push(`${q[0]} → ${Z[k][1]} ${ok?"✔":"✘"}`);
+    const t=(ok?"Bravo ! ":"Non, c'est : "+Z[q[1]][1]+". ")+(q[2]||"");
+    document.getElementById("fb").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"✅":"❌"} ${t}</div>`; speak(t);
+    setTimeout(()=>{ if(!b.isConnected) return; i++; i<Q.length?show():finish("plan",score,Q.length,det); }, ok?1700:3300);
+  });
+  show();
+}
+
+function actHygiene(){
+  yesNo({id:"hygiene", title:"L'hygiène au magasin", ico:"🧼", yes:"👍 C'est bien", no:"👎 Ce n'est pas bien",
+    cons:"Dans un magasin, surtout avec la nourriture, il faut être très propre. Est-ce un bon geste ?",
+    items:[["🧼","Je me lave les mains avant de toucher les produits frais.",1,"Les mains propres protègent les clients."],
+      ["💍","Au rayon boulangerie, je garde mes grosses bagues et mes bracelets.",0,"Les bijoux peuvent tomber dans les aliments et garder des microbes."],
+      ["📦","Je pose les cartons de nourriture directement par terre dans la réserve.",0,"La nourriture se range sur des étagères ou des palettes, pas par terre."],
+      ["❄️","Je range les surgelés au congélateur dès la livraison.",1,"On ne casse pas la chaîne du froid."],
+      ["🤧","J'éternue dans mon coude.",1,"Comme ça, je ne mets pas de microbes sur mes mains."],
+      ["🥖","Je prends le pain avec une pince ou des gants.",1,"On ne touche pas le pain avec les mains nues."],
+      ["📱","Je touche mon téléphone, puis le fromage, sans me laver les mains.",0,"Le téléphone a beaucoup de microbes."],
+      ["🍔","Je mange mon sandwich dans le rayon.",0,"On mange pendant la pause, dans la salle de pause."],
+      ["🧽","Je nettoie l'étal avant d'y mettre les fruits.",1,"Un étal propre, c'est plus sain et plus joli."],
+      ["💇","J'attache mes cheveux longs.",1,"Pas de cheveux dans les produits !"]]});
+}
+
+function actJournee(){
+  const T="🧑‍🏫 Ton tuteur";
+  dialogue({id:"journee", title:"Une journée au magasin", ico:"☀️", who:T,
+    cons:"Vis une journée complète d'équipier, du matin au soir. À chaque moment, choisis la meilleure réponse.",
+    steps:[
+      {n:"8 h 55. Tu arrives au magasin, en tenue, avec ton badge.", c:"Bonjour ! Prêt pour ta journée ?", opts:["Bonjour ! Oui, je suis prêt.","Bof.","(Je ne réponds pas.)"], ex:"J'arrive à l'heure et je dis bonjour."},
+      {c:"Ce matin, tu remplis le rayon des pâtes. N'oublie pas : les dates les plus proches devant.", opts:["D'accord : je mets les anciens produits devant et les nouveaux derrière.","Je mets les nouveaux devant, c'est plus rapide.","Je laisse les cartons dans l'allée."], ex:"Les produits les plus anciens se vendent en premier."},
+      {n:"Pendant que tu travailles, une cliente s'approche.", c:"Excusez-moi, où est le riz ?", who:"👵 Une cliente", opts:["Bonjour madame, je vous accompagne : c'est juste ici.","Cherchez.","Je travaille, là."], ex:"Le client passe en premier."},
+      {n:"Oups ! Tu fais tomber un pot de confiture. Il se casse par terre.", opts:["Je préviens tout de suite et je fais mettre un panneau « sol glissant ».","Je pousse les morceaux sous l'étagère.","Je pars vite."], ex:"D'abord la sécurité : personne ne doit se blesser ni glisser. Ensuite, on nettoie."},
+      {c:"Tu peux m'aider à déplacer cette palette ?", who:"👨 Un collègue", opts:["Oui, j'arrive ! Je prends le transpalette.","Non, c'est pas mon travail.","Je la porte avec mes bras."], ex:"J'aide l'équipe, avec le bon outil."},
+      {n:"12 h. C'est l'heure de la pause.", opts:["Je vais en salle de pause et je mange là-bas.","Je mange un paquet de gâteaux du rayon sans payer.","Je mange en remplissant le rayon."], ex:"On mange en salle de pause. Prendre un produit sans payer, c'est du vol."},
+      {n:"16 h 55. La journée est presque finie.", c:"Tu as fini ton rayon ?", opts:["Oui, et j'ai rangé les cartons vides au recyclage.","Je sais pas.","J'ai laissé les cartons, quelqu'un rangera."], ex:"Je laisse mon poste propre et rangé."},
+      {c:"Bravo pour ta journée ! À demain.", opts:["Merci ! Au revoir, à demain.","Enfin fini !","(Je pars sans rien dire.)"], ex:"Je dis au revoir à l'équipe."},
+    ]});
+}
+
+/* ================= ZONE 2 ================= */
+function actDevinette(){
+  const qs = pickN(VOCAB,8).map(v=>{ const others=pickN(VOCAB.filter(x=>x!==v),2);
+    return {q:"Qui suis-je ? "+v.def, opts:[v.e+" "+v.d, ...others.map(o=>o.e+" "+o.d)], good:0, explain:"C'est : "+v.d+"."}; });
+  app.innerHTML = `<div class="panel">${actHeader("Qui suis-je ?","❓")}
+    ${consigne("Lis la devinette et trouve le bon mot du magasin.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), qs, (s,d)=>finish("devinette",s,qs.length,d));
+}
+
+function actMystere(){
+  const words = pickN(VOCAB,5); let n=0, score=0; const det=track([]);
+  const food=["🍎","🥖","🧀","🥛","🍌","🥕","🍪"];
+  app.innerHTML = `<div class="panel">${actHeader("Le mot mystère","🧺")}
+    ${consigne("Trouve le mot caché en cliquant sur les lettres. Attention : à chaque erreur, un produit tombe du panier !")}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function play(){
+    const v=words[n]; const found=new Set(); let lives=food.length;
+    const draw=()=>{
+      g.innerHTML=`<p style="margin:0">Mot ${n+1} sur ${words.length}</p>
+        <div class="feedback info row" style="flex-wrap:nowrap">${sayBtn("Indice. "+v.def)}<span>💡 Indice : ${v.def}</span></div>
+        <div class="word">${[...v.w].map(l=>`<span>${found.has(l)?l:""}</span>`).join("")}</div>
+        <div class="basket" aria-label="Panier">🧺 ${food.slice(0,lives).join(" ")}${"<span style='opacity:.2'>⬜</span>".repeat(food.length-lives)}</div>
+        <div class="keys" style="margin-top:14px">${"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(l=>`<button class="key" data-l="${l}">${l}</button>`).join("")}</div><div id="fb"></div>`;
+    };
+    draw();
+    const bind=()=>g.querySelectorAll(".key").forEach(k=>k.onclick=()=>{
+      const l=k.dataset.l; if(v.w.includes(l)) found.add(l); else lives--;
+      const win=[...v.w].every(c=>found.has(c));
+      const tried=[...g.querySelectorAll(".key:disabled")].map(x=>x.dataset.l).concat(l);
+      draw(); g.querySelectorAll(".key").forEach(x=>{ if(tried.includes(x.dataset.l)){ x.disabled=true; if(v.w.includes(x.dataset.l)) x.classList.add("g"); } });
+      if(win||lives===0){
+        g.querySelectorAll(".key").forEach(x=>x.disabled=true);
+        if(win) score++; det.push(`${v.d} : ${win?"trouvé ✔ ("+(food.length-lives)+" erreur(s))":"pas trouvé ✘"}`);
+        if(!win) g.querySelector(".word").innerHTML=[...v.w].map(c=>`<span>${c}</span>`).join("");
+        const t = win?`Bravo ! Le mot était ${v.d}.`:`Dommage ! Le mot était ${v.d}.`;
+        g.querySelector("#fb").innerHTML=`<div class="feedback ${win?"good":"bad"}">${win?"🎉":"😕"} ${t}</div>`;
+        speak(t); setTimeout(()=>{ if(!g.isConnected) return; n++; n<words.length?play():finish("mystere",score,words.length,det); }, 2600);
+      } else bind();
+    });
+    bind();
+  }
+  play();
+}
+
+function actLettres(){
+  const words = pickN(VOCAB.filter(v=>v.w.length<=8),6); let n=0, score=0; const det=track([]);
+  app.innerHTML = `<div class="panel">${actHeader("Lettres mélangées","🔤")}
+    ${consigne("Les lettres sont mélangées ! Clique sur les lettres dans le bon ordre pour écrire le mot.")}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function play(){
+    const v=words[n]; let mix; do{ mix=shuffle([...v.w]); }while(mix.join("")===v.w);
+    let built=[], help=false, errors=0;
+    const draw=()=>{
+      g.innerHTML=`<p style="margin:0">Mot ${n+1} sur ${words.length}</p>
+        <div class="bigcard"><span class="e">${v.e}</span></div>
+        <div class="word">${[...v.w].map((c,i)=>`<span>${built[i]!==undefined?mix[built[i]]:(help&&i===0?`<i style="opacity:.4">${c}</i>`:"")}</span>`).join("")}</div>
+        <div class="letters">${mix.map((c,i)=>`<button class="letter" data-i="${i}" ${built.includes(i)?"disabled":""}>${c}</button>`).join("")}</div>
+        <div class="row" style="justify-content:center;margin-top:14px"><button class="btn ghost small" id="bk">⌫ Effacer</button><button class="btn ghost small" id="hp">💡 Indice</button></div><div id="fb"></div>`;
+      g.querySelectorAll(".letter").forEach(b=>b.onclick=()=>{ built.push(+b.dataset.i); draw(); check(); });
+      g.querySelector("#bk").onclick=()=>{ built.pop(); draw(); };
+      g.querySelector("#hp").onclick=()=>{ help=true; draw(); g.querySelector("#fb").innerHTML=`<div class="feedback info row" style="flex-wrap:nowrap">${sayBtn(v.def)}<span>💡 ${v.def}</span></div>`; };
+    };
+    const check=()=>{
+      if(built.length<v.w.length) return;
+      const w=built.map(i=>mix[i]).join("");
+      if(w===v.w){ const ok=errors===0&&!help; if(ok) score++; det.push(`${v.d} ✔ ${errors?errors+" erreur(s)":""}${help?" (avec indice)":""}`);
+        g.querySelectorAll(".letter,#bk,#hp").forEach(x=>x.disabled=true);
+        g.querySelector("#fb").innerHTML=`<div class="feedback good">🎉 Bravo ! ${v.d}</div>`;
+        speak("Bravo ! "+v.d);
+        setTimeout(()=>{ if(!g.isConnected) return; n++; n<words.length?play():finish("lettres",score,words.length,det); }, 1800);
+      } else { errors++; g.querySelector(".word").classList.add("shake"); g.querySelector("#fb").innerHTML=`<div class="feedback bad">Ce n'est pas le bon ordre. Clique sur Effacer et essaie encore.</div>`; }
+    };
+    draw();
+  }
+  play();
+}
+
+function actMemory(){
+  const sel = pickN(VOCAB,8);
+  const cards = shuffle(sel.flatMap((v,i)=>[{p:i,html:`<span class="e">${v.e}</span>`,say:v.d},{p:i,html:v.d,say:v.d}]));
+  let open=[], found=0, moves=0, lock=false;
+  app.innerHTML = `<div class="panel">${actHeader("Le jeu des paires","🃏")}
+    ${consigne("Retourne 2 cartes. Trouve l'image et le mot qui vont ensemble.")}
+    <p>Coups : <b id="mv">0</b> – Paires : <b id="pf">0</b> / ${sel.length}</p>
+    <div class="mem">${cards.map((c,i)=>`<button class="mcard" data-i="${i}" aria-label="Carte">🛒</button>`).join("")}</div></div>`;
+  app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i; if(lock||open.includes(i)||b.classList.contains("done")) return;
+    b.classList.add("open"); b.innerHTML=cards[i].html; speak(cards[i].say); open.push(i);
+    if(open.length===2){ moves++; document.getElementById("mv").textContent=moves; const [a,c]=open; setTimeout(()=>live([`En cours : ${moves} coups, ${found} paire(s) trouvée(s)`]),0);
+      if(cards[a].p===cards[c].p){ [a,c].forEach(k=>app.querySelector(`.mcard[data-i="${k}"]`).classList.add("done")); open=[]; found++; document.getElementById("pf").textContent=found;
+        if(found===sel.length){ const s=moves<=13?3:moves<=19?2:1; setTimeout(()=>finish("memory",s,3,[`Terminé en ${moves} coups`]),700); }
+      } else { lock=true; setTimeout(()=>{ [a,c].forEach(k=>{const x=app.querySelector(`.mcard[data-i="${k}"]`); x.classList.remove("open"); x.innerHTML="🛒";}); open=[]; lock=false; },1100); }
+    }
+  });
+}
+
+function actMotsMeles(){
+  const N=12; const words = pickN(VOCAB.filter(v=>v.w.length<=12),9).map(v=>v.w);
+  let grid;
+  for(let t=0;t<200;t++){
+    grid=Array(N*N).fill(null); let ok=true;
+    for(const w of [...words].sort((a,b)=>b.length-a.length)){
+      let placed=false;
+      for(let k=0;k<300&&!placed;k++){
+        const h=Math.random()<.5, r=Math.floor(Math.random()*(h?N:N-w.length+1)), c=Math.floor(Math.random()*(h?N-w.length+1:N));
+        const cells=[...w].map((_,i)=>h?r*N+c+i:(r+i)*N+c);
+        if(cells.every((x,i)=>grid[x]===null||grid[x]===w[i])){ cells.forEach((x,i)=>grid[x]=w[i]); placed=true; }
+      }
+      if(!placed){ ok=false; break; }
+    }
+    if(ok) break;
+  }
+  const A="ABCDEFGHIJLMNOPRSTUV"; grid=grid.map(x=>x||A[Math.floor(Math.random()*A.length)]);
+  const foundW=new Set(); let start=null, wrong=0;
+  app.innerHTML = `<div class="panel">${actHeader("Mots mêlés","🔍")}
+    ${consigne("Trouve les mots du magasin dans la grille. Les mots sont écrits de gauche à droite, ou de haut en bas. Clique sur la première lettre du mot, puis sur la dernière lettre.")}
+    <div class="wl" id="wl"></div>
+    <div class="ws" style="grid-template-columns:repeat(${N},1fr)">${grid.map((l,i)=>`<button data-i="${i}">${l}</button>`).join("")}</div>
+    <div id="fb"></div><p style="text-align:center"><button class="btn ghost small" id="stop">J'arrête et je termine</button></p></div>`;
+  const wl=()=>document.getElementById("wl").innerHTML=words.map(w=>`<span class="${foundW.has(w)?"f":""}">${VOCAB.find(v=>v.w===w).d}</span>`).join("");
+  wl();
+  const end=()=>finish("motsmeles",foundW.size,words.length,[`Mots trouvés : ${[...foundW].join(", ")||"aucun"}`,`Mauvaises sélections : ${wrong}`]);
+  document.getElementById("stop").onclick=end;
+  app.querySelectorAll(".ws button").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i, fb=document.getElementById("fb");
+    if(start===null){ start=i; b.classList.add("start"); return; }
+    const s=start; start=null; app.querySelector(`.ws button[data-i="${s}"]`).classList.remove("start");
+    const r1=Math.floor(s/N),c1=s%N,r2=Math.floor(i/N),c2=i%N; let cells=null;
+    if(r1===r2){ const a=Math.min(c1,c2),z=Math.max(c1,c2); cells=[]; for(let c=a;c<=z;c++) cells.push(r1*N+c); }
+    else if(c1===c2){ const a=Math.min(r1,r2),z=Math.max(r1,r2); cells=[]; for(let r=a;r<=z;r++) cells.push(r*N+c1); }
+    const w = cells ? cells.map(x=>grid[x]).join("") : "";
+    const hit = words.find(x=>!foundW.has(x) && (x===w || x===[...w].reverse().join("")));
+    if(hit){ foundW.add(hit); live([`Mots trouvés : ${[...foundW].join(", ")}`]); cells.forEach(x=>app.querySelector(`.ws button[data-i="${x}"]`).classList.add("f")); wl();
+      const d=VOCAB.find(v=>v.w===hit).d; fb.innerHTML=`<div class="feedback good">✅ Tu as trouvé : ${d} !</div>`; speak(d);
+      if(foundW.size===words.length) setTimeout(end,900);
+    } else { wrong++; fb.innerHTML=`<div class="feedback bad">Ce n'est pas un mot de la liste. Clique sur la première lettre, puis sur la dernière lettre.</div>`; }
+  });
+}
+
+/* ================= ZONE 2 (suite) ================= */
+function actEcoute(){
+  const words=pickN(VOCAB.filter(v=>v.w.length<=10),6); let n=0, score=0; const det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader("Écoute et écris","🎧")}
+    ${consigne("Écoute le mot. Regarde l'image et l'indice. Écris le mot, puis clique sur Valider. Les accents ne comptent pas.")}<div id="g"></div></div>`;
+  const g=document.getElementById("g");
+  function play(){
+    const v=words[n]; let tries=0, help=0;
+    g.innerHTML=`<p style="margin:0">Mot ${n+1} sur ${words.length}</p>
+      <div class="bigcard"><span class="e">${v.e}</span><button class="btn yellow" data-say="${esc(v.d)}">🔊 Écouter le mot</button></div>
+      <div class="feedback info">💡 ${v.def}</div>
+      <p>Le mot a <b>${v.w.length}</b> lettres.</p>
+      <input id="ans" autocomplete="off" aria-label="Écris le mot" style="width:100%;font:inherit;font-size:1.5rem;padding:12px;border-radius:12px;border:3px solid var(--line);text-align:center;text-transform:uppercase">
+      <div class="row" style="margin-top:12px"><button class="btn yellow" id="ok">✅ Valider</button><button class="btn ghost small" id="hp">💡 Donne-moi une lettre</button></div><div id="fb"></div>`;
+    speak(v.d);
+    const inp=g.querySelector("#ans"); inp.focus();
+    inp.onkeydown=e=>{ if(e.key==="Enter") check(); };
+    g.querySelector("#ok").onclick=check;
+    g.querySelector("#hp").onclick=()=>{ help=Math.min(help+1,v.w.length-1); inp.value=v.d.slice(0,help).toUpperCase(); inp.focus(); };
+    function check(){
+      const a=norm(inp.value).replace(/[^a-z]/g,""), fb=g.querySelector("#fb");
+      if(!a){ fb.innerHTML=`<div class="feedback bad">Écris le mot 🙂</div>`; return; }
+      tries++;
+      const ok=a===v.w.toLowerCase();
+      if(ok||tries>=3){
+        if(ok&&tries===1&&help===0) score++;
+        det.push(`${v.d} : « ${inp.value} » ${ok?"✔":"✘"}${tries>1?" – "+tries+" essais":""}${help?" – "+help+" lettre(s) donnée(s)":""}`);
+        const t= ok?`Bravo ! ${v.d}.`:`Le mot était : ${v.d}.`;
+        fb.innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"🎉":"😕"} ${t}</div>`; speak(t);
+        g.querySelectorAll("#ok,#hp,#ans").forEach(x=>x.disabled=true);
+        setTimeout(()=>{ if(!g.isConnected) return; n++; n<words.length?play():finish("ecoute",score,words.length,det); }, ok?2000:3200);
+      } else { fb.innerHTML=`<div class="feedback bad">❌ Pas tout à fait. Écoute encore et vérifie les lettres.</div>`; speak(v.d); inp.select(); }
+    }
+  }
+  play();
+}
+
+function actTrous(){
+  const Q=[
+    ["Le nom du magasin écrit sur la façade, c'est l'______ .",["enseigne","étiquette","échange"],"L'enseigne."],
+    ["Un petit magasin de quartier, c'est une ______ .",["supérette","palette","pause"],"Une supérette."],
+    ["Le client essaie les vêtements dans la ______ .",["cabine","caisse","réserve"],"Dans la cabine d'essayage."],
+    ["S, M, L : c'est la ______ du vêtement.",["taille","marque","pause"],"La taille."],
+    ["L'______ sonne si quelqu'un sort sans payer.",["antivol","affiche","accueil"],"L'antivol."],
+    ["Le client paie avec sa carte sur le ______ .",["terminal","panier","tuteur"],"Le terminal."],
+    ["Pour renseigner les clients, il y a l'______ à l'entrée.",["accueil","antivol","horaire"],"L'accueil."],
+    ["Je mange pendant ma ______ , dans la salle de pause.",["pause","cabine","tenue"],"Pendant ma pause."],
+    ["Je me lave les mains : c'est l'______ .",["hygiène","enseigne","affiche"],"L'hygiène."],
+    ["Au téléphone, la personne est absente : je prends un ______ .",["message","ticket","carton"],"Je prends un message."],
+  ];
+  app.innerHTML=`<div class="panel">${actHeader("Les phrases à trous","✏️")}${consigne("Il manque un mot dans la phrase. Choisis le bon mot.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), shuffle(Q).map(x=>({q:x[0], opts:x[1], good:0, explain:x[2]})), (s,d)=>finish("trous",s,Q.length,d));
+}
+
+/* ================= ZONE 3 ================= */
+function numRounds(o){
+  let r=0, score=0; const det=track([]);
+  function play(){
+    const R=o.rounds[r]; let tries=0;
+    app.innerHTML=`<div class="panel">${actHeader(`${o.title} (${r+1}/${o.rounds.length})`,o.ico)}${consigne(R.cons)}
+      <div id="vis">${R.html}</div>
+      <div class="row" style="margin-top:16px"><label for="ans"><b>${R.q}</b></label>
+      <input id="ans" type="number" inputmode="numeric" min="0" style="width:120px;font:inherit;font-size:1.6rem;padding:8px;border-radius:12px;border:3px solid var(--line);text-align:center">
+      <button class="btn yellow" id="ok">✅ Valider</button><button class="btn ghost small" id="hp">💡 Aide</button></div><div id="fb"></div></div>`;
+    if(o.bind) o.bind(app.querySelector("#vis"));
+    const inp=app.querySelector("#ans"); inp.focus();
+    inp.onkeydown=e=>{ if(e.key==="Enter") check(); };
+    app.querySelector("#ok").onclick=check;
+    app.querySelector("#hp").onclick=()=>{ if(R.helpVis) app.querySelector("#vis").innerHTML=R.helpVis; document.getElementById("fb").innerHTML=`<div class="feedback info">💡 ${R.help}</div>`; speak(R.help); };
+    function check(){
+      const v=parseInt(inp.value,10), fb=document.getElementById("fb");
+      if(isNaN(v)){ fb.innerHTML=`<div class="feedback bad">Écris un nombre 🙂</div>`; return; }
+      tries++;
+      if(v===R.ans||tries>=3){ const ok=v===R.ans; if(ok&&tries===1) score++;
+        det.push(`${R.label} : ${v} ${ok?"✔":"✘ (bonne réponse : "+R.ans+")"}${tries>1?" – "+tries+" essais":""}`);
+        const t= ok?`Bravo ! La réponse est ${R.ans}.`:`La bonne réponse était ${R.ans}.`;
+        fb.innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"✅":"❌"} ${t}</div>`; speak(t);
+        app.querySelectorAll("#ok,#hp,#ans").forEach(x=>x.disabled=true);
+        setTimeout(()=>{ if(!fb.isConnected) return; r++; r<o.rounds.length?play():finish(o.id,score,o.rounds.length,det); }, ok?1800:3200);
+      } else { const t= v<R.ans?"C'est plus.":"C'est moins."; fb.innerHTML=`<div class="feedback bad">❌ Ce n'est pas ça. ${t} Essaie encore.</div>`; speak(t); inp.select(); }
+    }
+  }
+  play();
+}
+function placeGame(o){
+  const items=shuffle(o.items); let sel=null, placed=0; const miss=new Set(), det=track([]);
+  app.innerHTML=`<div class="panel">${actHeader(o.title,o.ico)}${consigne(o.cons)}
+    <div class="products">${items.map((p,i)=>`<button class="prod" data-i="${i}"><span class="e">${p[0]}</span>${p[1]}</button>`).join("")}</div>
+    <div class="shelves">${o.bins.map((s,k)=>`<button class="shelf" data-k="${k}"><div class="sign">${s}</div><div class="in" id="in${k}"></div></button>`).join("")}</div>
+    <div id="fb"></div><div id="qz"></div></div>`;
+  app.querySelectorAll(".prod").forEach(b=>b.onclick=()=>{ app.querySelectorAll(".prod").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); sel=+b.dataset.i; speak(items[sel][1]); });
+  app.querySelectorAll(".shelf").forEach(b=>b.onclick=()=>{
+    const fb=document.getElementById("fb");
+    if(placed===items.length) return;
+    if(sel===null){ fb.innerHTML=`<div class="feedback bad">👆 Choisis d'abord un produit.</div>`; return; }
+    const p=items[sel], k=+b.dataset.k;
+    if(p[2]===k){ document.getElementById("in"+k).textContent+=p[0]; app.querySelector(`.prod[data-i="${sel}"]`).remove();
+      placed++; det.push(`${p[1]} → ${o.bins[k]} ${miss.has(sel)?"(après une erreur)":"✔"}`); sel=null;
+      fb.innerHTML=`<div class="feedback good">✅ Bien rangé !</div>`;
+      if(placed===items.length){ const pts=items.length-miss.size;
+        setTimeout(()=>{ if(!fb.isConnected) return; fb.innerHTML=`<div class="feedback good">🎯 Tout est rangé !</div>`;
+          runQuiz(document.getElementById("qz"), o.quiz, (s,d)=>finish(o.id, pts+s, items.length+o.quiz.length, det.concat(d))); },900); }
+    } else { miss.add(sel); b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
+      fb.innerHTML=`<div class="feedback bad">❌ Pas ici ! ${p[0]} ${p[1]} : essaie un autre endroit.</div>`; }
+  });
+}
+function ordreGame(id,T,ico,cons,rounds){
+  let r=0, score=0; const det=track([]);
+  function play(){
+    const R=rounds[r]; const mix=shuffle(R.steps.map((s,i)=>({s,i}))); let step=0, err=0;
+    app.innerHTML=`<div class="panel">${actHeader(`${T} – ${R.t} (${r+1}/${rounds.length})`,ico)}
+      ${consigne(cons)}
+      <div class="opts" id="mx">${mix.map((m,k)=>`<button class="opt" data-k="${k}">${m.s}</button>`).join("")}</div>
+      <h3 style="margin-top:18px">Le bon ordre</h3><ol id="okl" style="font-size:1.05rem"></ol><div id="fb"></div></div>`;
+    app.querySelectorAll("#mx .opt").forEach(b=>b.onclick=()=>{
+      const m=mix[+b.dataset.k], fb=document.getElementById("fb");
+      if(m.i===step){ step++; b.remove(); document.getElementById("okl").insertAdjacentHTML("beforeend",`<li>${m.s}</li>`);
+        fb.innerHTML=`<div class="feedback good">✅ Oui !</div>`; speak(m.s);
+        if(step===R.steps.length){ if(err<=1) score++; det.push(`${R.t} : ${err} erreur(s)`);
+          fb.innerHTML=`<div class="feedback good">🎯 Bravo, tout est dans l'ordre !</div>`;
+          setTimeout(()=>{ if(!fb.isConnected) return; r++; r<rounds.length?play():finish(id,score,rounds.length,det); },2000); }
+      } else { err++; b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
+        fb.innerHTML=`<div class="feedback bad">❌ Ce n'est pas encore cette étape. Cherche celui qui vient en numéro ${step+1}.</div>`; }
+    });
+  }
+  play();
+}
+
+function actCaisse(){
+  const rounds=[{items:[["👕 Tee-shirt",1000],["🧦 Chaussettes",500],["🏷️ Remise",-200]],paid:2000},
+                {items:[["🍫 Chocolat (2 × 2,00 €)",400],["🎁 1 acheté = 1 offert",-200],["🥖 Pain",110]],paid:500},
+                {items:[["👖 Jean",3000],["🧢 Casquette",1200],["🏷️ Soldes sur le jean",-1500]],paid:5000},
+                {items:[["🧴 Lessive",890],["🧽 Éponges",250],["🧻 Essuie-tout",320]],paid:2000}];
+  const money=[[2000,"20 €","bill b20"],[1000,"10 €","bill b10"],[500,"5 €","bill b5"],[200,"2 €","coin c-bi"],[100,"1 €","coin c-bi"],[50,"50 c","coin c-gold"],[20,"20 c","coin c-gold"],[10,"10 c","coin c-gold"]];
+  const euro=c=>(c/100).toFixed(2).replace(".",",")+" €";
+  let r=0, score=0; const det=track([]);
+  function show(){
+    const R=rounds[r]; const total=R.items.reduce((s,i)=>s+i[1],0); const due=R.paid-total;
+    const choices=shuffle([total,total+100,total-50]); let t1=0;
+    const ticket=tot=>`<div class="ticket"><b>TICKET</b><br>${R.items.map(i=>`${i[0]} ...... ${euro(i[1])}`).join("<br>")}<div class="tot">TOTAL : ${tot}</div>${tot!=="?"?`<div>Le client donne : <b>${euro(R.paid)}</b></div>`:""}</div>`;
+    app.innerHTML=`<div class="panel">${actHeader(`La caisse – client ${r+1} sur ${rounds.length}`,"💶")}
+      ${consigne("Étape 1 : additionne les prix. Attention : une ligne avec un moins, c'est une remise. Elle fait baisser le total. Quel est le total à payer ?")}
+      <div class="row" style="align-items:flex-start;gap:24px">${ticket("?")}
+        <div style="flex:1;min-width:240px"><div class="opts">${choices.map(c=>`<button class="opt" data-v="${c}">${euro(c)}</button>`).join("")}</div>
+        <p><button class="btn ghost small" id="hlp">💡 Aide</button></p><div id="fb"></div></div></div></div>`;
+    document.getElementById("hlp").onclick=()=>{ document.getElementById("fb").innerHTML=`<div class="feedback info">💡 ${R.items.map(i=>euro(i[1])).join(" + ")} = ?</div>`; };
+    app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+      t1++; const fb=document.getElementById("fb");
+      if(+b.dataset.v===total){ if(t1===1) score++; det.push(`Client ${r+1} – total ${euro(total)} ${t1===1?"du 1er coup ✔":"en "+t1+" essais"}`);
+        fb.innerHTML=`<div class="feedback good">✅ Oui, le total est ${euro(total)}.</div>`; speak("Oui !");
+        app.querySelectorAll(".opt").forEach(x=>x.disabled=true); setTimeout(()=>{ if(fb.isConnected) step2(); },1500);
+      } else { b.disabled=true; b.classList.add("bad"); fb.innerHTML=`<div class="feedback bad">❌ Ce n'est pas le bon total. Recompte : ${R.items.map(i=>euro(i[1])).join(" + ")}</div>`; }
+    });
+    function step2(){
+      let tray=[], tries=0, help=false;
+      app.innerHTML=`<div class="panel">${actHeader(`La caisse – client ${r+1} sur ${rounds.length}`,"💶")}
+        ${consigne(`Étape 2 : le client paie avec ${R.paid/100} euros. Rends-lui la monnaie avec les pièces et les billets.`)}
+        <div class="row" style="align-items:flex-start;gap:24px">${ticket(euro(total))}
+          <div style="flex:1;min-width:260px">
+            <div class="tray"><div>Je rends au client :</div><div class="sum" id="sum">0,00 €</div><div id="tr" style="font-size:.95rem"></div></div>
+            <div class="money">${money.map(m=>`<button class="${m[2]}" data-v="${m[0]}" aria-label="${m[1]}">${m[1]}</button>`).join("")}</div>
+            <div class="row"><button class="btn yellow" id="ok">✅ Je rends la monnaie</button><button class="btn ghost small" id="clr">↩ Tout reprendre</button><button class="btn ghost small" id="hlp">💡 Aide</button></div>
+            <div id="fb"></div></div></div></div>`;
+      const upd=()=>{ const s=tray.reduce((a,b)=>a+b,0); document.getElementById("sum").textContent=euro(s); document.getElementById("tr").textContent=tray.map(v=>money.find(m=>m[0]===v)[1]).join(" + "); };
+      app.querySelectorAll(".money button").forEach(b=>b.onclick=()=>{ tray.push(+b.dataset.v); upd(); });
+      document.getElementById("clr").onclick=()=>{ tray=[]; upd(); };
+      document.getElementById("hlp").onclick=()=>{ help=true; document.getElementById("fb").innerHTML=`<div class="feedback info">💡 Ce que le client donne − le total = la monnaie.<br>${euro(R.paid)} − ${euro(total)} = ?</div>`; };
+      document.getElementById("ok").onclick=()=>{
+        const s=tray.reduce((a,b)=>a+b,0); tries++; const fb=document.getElementById("fb");
+        if(s===due){ if(tries===1) score++;
+          det.push(`Client ${r+1} – monnaie ${euro(due)} ${tries===1?"du 1er coup ✔":"en "+tries+" essais"}${help?" (avec l'aide)":""}`);
+          fb.innerHTML=`<div class="feedback good">✅ Exact ! Tu as rendu ${euro(due)}.</div>`; speak("Exact !");
+          app.querySelectorAll(".money button,#ok,#clr,#hlp").forEach(x=>x.disabled=true);
+          setTimeout(()=>{ if(!fb.isConnected) return; r++; r<rounds.length? show() : finish("caisse", score, rounds.length*2, det); }, 1800);
+        } else fb.innerHTML=`<div class="feedback bad">❌ Tu rends ${euro(s)}. ${s>due?"C'est trop !":"Ce n'est pas assez."} Essaie encore.</div>`;
+      };
+    }
+  }
+  show();
+}
+
+function actOrdre4(){
+  ordreGame("ordre","Remettre dans l'ordre","🔢","Les étapes sont mélangées. Clique sur les étapes dans le bon ordre : la première d'abord.",[
+   {t:"L'ouverture du magasin", steps:["⏰ J'arrive à l'heure et je mets ma tenue.","💡 On allume les lumières et les caisses.","🛒 Je remplis les rayons vides.","🧹 Je vérifie que les allées sont propres et libres.","🚪 On ouvre les portes aux clients.","👋 Je dis bonjour aux premiers clients."]},
+   {t:"Le paquet cadeau", steps:["🏷️ J'enlève l'étiquette de prix.","📏 Je coupe le papier à la bonne taille.","🎁 J'emballe le produit dans le papier.","✋ Je ferme le papier avec du ruban adhésif.","🎀 J'ajoute un joli ruban.","😊 Je donne le paquet au client avec le sourire."]},
+   {t:"La fermeture du magasin", steps:["📢 On annonce aux clients que le magasin va fermer.","🧾 Les derniers clients passent en caisse.","🚪 On ferme les portes.","🛒 Je range les chariots et les paniers.","🧹 Je range et je nettoie mon rayon.","👋 Je dis au revoir à l'équipe."]}]);
+}
+function actTailles(){
+  ordreGame("tailles","Du plus petit au plus grand","📏","Range du plus petit au plus grand. Clique d'abord sur le plus petit.",[
+   {t:"Les tailles de vêtements", steps:["XS : très petit","S : petit","M : moyen","L : grand","XL : très grand","XXL : très, très grand"]},
+   {t:"Les pointures de chaussures", steps:["👟 Pointure 36","👟 Pointure 38","👟 Pointure 40","👟 Pointure 42","👟 Pointure 44","👟 Pointure 46"]},
+   {t:"Les bouteilles", steps:["🥤 25 centilitres (25 cl)","🥤 33 centilitres (33 cl)","🥤 50 centilitres (50 cl)","🥤 1 litre (1 L)","🥤 1 litre et demi (1,5 L)","🥤 2 litres (2 L)"]}]);
+}
+function actTextile(){
+  placeGame({id:"textile", title:"Le rayon vêtements", ico:"👕",
+    cons:"Range chaque article dans le bon rayon. Clique sur un article, puis sur le bon rayon.",
+    bins:["👕 Les hauts","👖 Les bas","👟 Les chaussures","🧢 Les accessoires"],
+    items:[["👕","Tee-shirt",0],["👔","Chemise",0],["🧥","Manteau",0],["👖","Jean",1],["🩳","Short",1],
+           ["👟","Baskets",2],["👢","Bottes",2],["👡","Sandales",2],["🧢","Casquette",3],["🧣","Écharpe",3],["🧤","Gants",3],["👜","Sac à main",3]],
+    quiz:[{q:"Un client ne trouve pas sa taille. Je :", opts:["Regarde dans la réserve ou je lui propose un autre modèle","Lui dis de partir","Lui donne une taille trop petite"], good:0},
+          {q:"Le client sort de la cabine et laisse des vêtements. Je :", opts:["Les plie ou je les remets sur cintre, puis je les range au bon endroit","Les laisse par terre","Les mets à la poubelle"], good:0}]});
+}
+function actVente4(){
+  dialogue({id:"vente", title:"Conseiller un client au rayon vêtements", ico:"💬", who:"🧑 Le client",
+    cons:"Un client a besoin d'aide pour choisir un vêtement. N'oublie pas les étapes : accueillir, poser des questions, proposer, conclure, dire au revoir.",
+    steps:[
+      {n:"Un jeune homme regarde les sweats. Il hésite.", opts:["Bonjour, je peux vous aider ?","Tu veux quoi ?","(Je ne dis rien.)"], ex:"J'accueille le client avec le sourire."},
+      {c:"Oui, je cherche un sweat pour faire du sport.", opts:["Quelle taille faites-vous ? Et vous préférez quelle couleur ?","Prenez celui-là.","Je sais pas."], ex:"Je pose des questions pour comprendre le besoin."},
+      {c:"Je fais du M. J'aime bien le bleu.", opts:["Voici ce sweat bleu en taille M. Il est léger, pratique pour le sport. Vous voulez l'essayer ?","On n'a que du rose.","Le M, c'est trop petit pour vous."], ex:"Je propose un produit qui correspond au besoin."},
+      {c:"Oui, je veux bien l'essayer.", opts:["Les cabines d'essayage sont par ici, je vous accompagne.","Essayez-le au milieu du magasin.","Non, c'est interdit."], ex:"J'accompagne le client à la cabine."},
+      {n:"Le client revient : le sweat lui va très bien.", c:"Super, je le prends !", opts:["Très bon choix ! Vous pouvez payer à la caisse, juste là. Bonne journée !","Enfin !","OK."], ex:"Je conclus et je dis au revoir poliment."},
+    ]});
+}
+function actPromos(){
+  const Q=[
+    {q:"🏷️ Le prix est 5 €. Remise : − 1 €. Le client paie :", opts:["4 €","6 €","5 €"], good:0, explain:"5 − 1 = 4."},
+    {q:"🍫 « 1 acheté = 1 offert ». Une tablette coûte 2 €. Le client prend 2 tablettes. Il paie :", opts:["2 €","4 €","1 €"], good:0, explain:"Il paie la première. La deuxième est offerte."},
+    {q:"🧃 « 3 pour le prix de 2 ». Une brique coûte 1 €. Le client prend 3 briques. Il paie :", opts:["2 €","3 €","1 €"], good:0, explain:"Il paie 2 briques : 1 + 1 = 2."},
+    {q:"👕 Le tee-shirt coûte 10 €. Soldes : − 50 %. − 50 %, c'est la moitié du prix. Il coûte maintenant :", opts:["5 €","10 €","50 €"], good:0, explain:"La moitié de 10 €, c'est 5 €."},
+    {q:"👖 Le jean coûte 30 €. Soldes : − 50 %. Il coûte maintenant :", opts:["15 €","30 €","20 €"], good:0, explain:"La moitié de 30 €, c'est 15 €."},
+    {q:"🧴 Ancien prix : 4 €. Nouveau prix : 3 €. Le client économise :", opts:["1 €","3 €","7 €"], good:0, explain:"4 − 3 = 1."},
+    {q:"🍪 Un paquet de biscuits coûte 2 €. Le 2e paquet est à moitié prix. Pour 2 paquets, le client paie :", opts:["3 €","4 €","2 €"], good:0, explain:"2 € + 1 € = 3 €."},
+    {q:"📣 Une affiche promo est tombée par terre. Je :", opts:["La remets en place ou je préviens mon responsable","La laisse par terre","La jette"], good:0},
+  ];
+  app.innerHTML=`<div class="panel">${actHeader("Promos et soldes","🏷️")}${consigne("Les promotions font baisser les prix. Calcule ce que le client paie.")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("promos",s,Q.length,d));
+}
+function tline(ranges){ let s=""; for(let h=7;h<19;h++){ const w=ranges.some(([a,b])=>h>=a&&h<b); s+=`<div class="${w?"w":""}">${h} h</div>`; } return `<div class="tline">${s}</div>`; }
+function actHeures(){
+  const data=[["Lundi",[[9,12]],"de 9 h à 12 h",3],["Mardi",[[14,18]],"de 14 h à 18 h",4],["Jeudi",[[8,12],[14,16]],"de 8 h à 12 h et de 14 h à 16 h",6],
+              ["Vendredi",[[9,12],[13,17]],"de 9 h à 12 h et de 13 h à 17 h",7],["Samedi",[[7,13]],"de 7 h à 13 h",6]];
+  numRounds({id:"heures", title:"Compter mes heures", ico:"⏱️",
+    rounds:data.map(([j,r,t,a])=>({label:`${j} ${t}`, ans:a,
+      cons:`${j}, je travaille ${t}. Combien d'heures je travaille ce jour-là ? Regarde la frise : chaque case jaune, c'est 1 heure de travail.`,
+      html:tline(r), q:"Je travaille combien d'heures ?", help:"Compte les cases jaunes. Une case = 1 heure."}))});
+}
+function actMessage(){
+  const calls=[
+    {say:"Bonjour, ici Madame Benali, de l'entreprise Fruits du Sud. Je voudrais parler à Monsieur Durand, le chef de rayon, s'il vous plaît. Ah, il n'est pas là ? Pouvez-vous lui dire que la livraison de bananes arrivera demain à 8 heures ? Mon numéro est le 06 39 98 12 34. Merci, au revoir.",
+     f:[["Qui appelle ?",["Mme Benali, de l'entreprise Fruits du Sud","M. Durand","Le livreur"]],
+        ["Pour qui est le message ?",["M. Durand, le chef de rayon","Mme Benali","Le directeur"]],
+        ["Quel est le message ?",["La livraison de bananes arrive demain à 8 h","Les bananes sont en promotion","La livraison est annulée"]],
+        ["Quel est son numéro ?",["06 39 98 12 34","06 39 98 21 43","06 39 98 12 43"]]]},
+    {say:"Bonjour, ici Monsieur Leroy. J'ai commandé un gâteau d'anniversaire au magasin. Je voudrais parler à Madame Costa, de la boulangerie, s'il vous plaît. Ah, elle n'est pas là ? Pouvez-vous lui dire que je viendrai chercher le gâteau samedi à 11 heures ? Mon numéro est le 06 39 98 56 78. Merci, au revoir.",
+     f:[["Qui appelle ?",["M. Leroy, un client","Mme Costa","Le boulanger"]],
+        ["Pour qui est le message ?",["Mme Costa, de la boulangerie","M. Leroy","Le chef de rayon"]],
+        ["Quel est le message ?",["Il viendra chercher son gâteau samedi à 11 h","Il annule son gâteau","Il viendra dimanche à 18 h"]],
+        ["Quel est son numéro ?",["06 39 98 56 78","06 39 98 65 87","06 39 98 56 87"]]]}];
+  let r=0, score=0; const det=track([]);
+  function play(){
+    const C=calls[r], ans={};
+    app.innerHTML=`<div class="panel">${actHeader(`Prendre un message (${r+1}/${calls.length})`,"📝")}
+      ${consigne("Le téléphone sonne. La personne demandée n'est pas là. Écoute bien l'appel, tu peux l'écouter plusieurs fois. Puis remplis la fiche message.")}
+      <div class="bub c" style="max-width:100%"><span class="who">☎️ Au téléphone</span><button class="btn yellow" data-say="${esc(C.say)}">🔊 Écouter l'appel</button>
+        <details style="margin-top:10px"><summary>📖 Lire l'appel</summary><p>${C.say}</p></details></div>
+      <div class="msgcard"><b>📝 FICHE MESSAGE</b>
+        ${C.f.map((f,k)=>`<p style="margin:14px 0 6px"><b>${f[0]}</b></p><div class="row">${shuffle(f[1]).map(o=>`<button class="chip" data-f="${k}" data-v="${esc(o)}">${o}</button>`).join("")}</div>`).join("")}</div>
+      <p><button class="btn yellow" id="ok">✅ Je donne le message</button></p><div id="fb"></div></div>`;
+    speak(C.say);
+    app.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ ans[b.dataset.f]=b.dataset.v; app.querySelectorAll(`[data-f="${b.dataset.f}"]`).forEach(x=>x.classList.toggle("sel",x===b)); });
+    document.getElementById("ok").onclick=()=>{
+      const fb=document.getElementById("fb");
+      if(Object.keys(ans).length<C.f.length){ fb.innerHTML=`<div class="feedback bad">Réponds aux 4 questions de la fiche 🙂</div>`; return; }
+      let s=0; let html="";
+      C.f.forEach((f,k)=>{ const ok=ans[k]===f[1][0]; if(ok) s++; det.push(`Appel ${r+1} – ${f[0]} « ${ans[k]} » ${ok?"✔":"✘"}`);
+        html+=`<div class="feedback ${ok?"good":"bad"}">${ok?"✅":"❌"} <b>${f[0]}</b> ${ok?f[1][0]:"La bonne réponse : "+f[1][0]}</div>`; });
+      score+=s; app.querySelectorAll("[data-f],#ok").forEach(x=>x.disabled=true);
+      fb.innerHTML=html; speak(s===C.f.length?"Bravo, le message est parfait !":`Tu as ${s} bonnes réponses sur ${C.f.length}.`);
+      setTimeout(()=>{ if(!fb.isConnected) return; r++; r<calls.length?play():finish("message",score,calls.length*4,det); }, s===C.f.length?2500:6000);
+    };
+  }
+  play();
+}
+
+/* ================= ZONE 4 : mon magasin idéal ================= */
+function magHTML(m,sm){ return `<div class="mag ${sm?"sm":""}" style="--mc:${m.c}"><div class="aw"></div><div class="mn">${m.e} ${esc(m.n)}</div><div class="mt">${esc(m.t)}</div><div class="ms">« ${esc(m.s)} »</div><div class="mr">${m.r.map(x=>`<span>${esc(x)}</span>`).join("")}</div></div>`; }
+function actMonMag(){
+  const st=state.students[cur]; const m=Object.assign({n:"",t:"",e:"🛒",c:"#0E5C63",s:"Toujours à votre service",r:[]}, st.magasin||{});
+  const T=["Supérette","Supermarché","Magasin de vêtements","Magasin de sport","Boulangerie","Magasin de jouets"];
+  const E=["🛒","⭐","🍎","👕","⚽","🥖","🧸","🌈","🦁","🚀"];
+  const C=["#0E5C63","#E5483B","#1F8A4C","#7A4FB5","#3B7DD8","#B83280","#8A5A3B","#C2410C"];
+  const S=["Toujours à votre service","Des prix tout doux","Le sourire en plus","Frais tous les jours","Tout près de chez vous"];
+  const R=["Fruits et légumes","Produits frais","Épicerie","Boissons","Surgelés","Hygiène","Vêtements","Chaussures","Sport","Jouets","Boulangerie","Drive"];
+  app.innerHTML=`<div class="panel">${actHeader("Mon magasin idéal","🏬")}
+    ${consigne("Invente ton propre magasin ! Écris son nom, choisis le type de magasin, un logo, une couleur, une phrase, et 2 à 4 rayons.")}
+    <div id="prev" style="margin-bottom:18px;display:flex;justify-content:center"></div>
+    <h3><label for="mn">Le nom de mon magasin</label></h3>
+    <input id="mn" maxlength="22" autocomplete="off" value="${esc(m.n)}" style="width:100%;max-width:420px;font:inherit;font-size:1.3rem;padding:10px;border-radius:12px;border:3px solid var(--line)">
+    <h3 style="margin-top:16px">Le type de magasin</h3><div class="row">${T.map(x=>`<button class="chip" data-g="t" data-v="${esc(x)}">${x}</button>`).join("")}</div>
+    <h3 style="margin-top:16px">Le logo</h3><div class="row">${E.map(x=>`<button class="smiley" data-g="e" data-v="${x}">${x}</button>`).join("")}</div>
+    <h3 style="margin-top:16px">La couleur</h3><div class="palette">${C.map(c=>`<button class="pcol" data-g="c" data-v="${c}" style="background:${c}" aria-label="couleur"></button>`).join("")}</div>
+    <h3 style="margin-top:16px">La phrase du magasin</h3><div class="row">${S.map(x=>`<button class="chip" data-g="s" data-v="${esc(x)}">${x}</button>`).join("")}</div>
+    <h3 style="margin-top:16px">Les rayons (2 à 4)</h3><div class="row">${R.map(x=>`<button class="chip" data-g="r" data-v="${esc(x)}">${x}</button>`).join("")}</div>
+    <p><button class="btn yellow" id="sv">💾 J'enregistre mon magasin</button></p><div id="fb"></div></div>`;
+  const draw=()=>{ document.getElementById("prev").innerHTML=magHTML({...m, n:m.n||"Mon magasin"});
+    app.querySelectorAll("[data-g]").forEach(b=>{ const g=b.dataset.g, v=b.dataset.v;
+      b.classList.toggle("sel",(g==="t"&&v===m.t)||(g==="e"&&v===m.e)||(g==="c"&&v===m.c)||(g==="s"&&v===m.s)||(g==="r"&&m.r.includes(v))); }); };
+  app.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{ const g=b.dataset.g, v=b.dataset.v;
+    if(g==="r"){ if(m.r.includes(v)) m.r=m.r.filter(x=>x!==v); else if(m.r.length<4){ m.r.push(v); speak(v); } else toast("Tu as déjà 4 rayons. Clique sur un rayon pour l'enlever."); }
+    else { m[g]=v; if(g!=="c"&&g!=="e") speak(v); }
+    draw(); });
+  document.getElementById("mn").oninput=e=>{ m.n=e.target.value; draw(); };
+  document.getElementById("sv").onclick=()=>{
+    m.n=m.n.trim();
+    if(!m.n||!m.t||m.r.length<2){ document.getElementById("fb").innerHTML=`<div class="feedback bad">Écris le nom, choisis le type de magasin et au moins 2 rayons 🙂</div>`; return; }
+    st.magasin={...m}; finish("monmag",1,1,[`${m.n} – ${m.t} – rayons : ${m.r.join(", ")}`],"Super magasin ! Il est enregistré.",`<div style="display:flex;justify-content:center;margin-top:18px">${magHTML(st.magasin)}</div>`);
+  };
+  draw();
+}
+
+/* ================= ZONE 5 : le grand défi ================= */
+function actDefi(){
+  const POOL=[
+    ["Un tout petit magasin de quartier, c'est :",["Une supérette","Un hypermarché","Un drive"],""],
+    ["Le nom du magasin sur la façade, c'est :",["L'enseigne","Le ticket","Le planning"],""],
+    ["Un client cherche du shampooing. Je l'emmène au rayon :",["Hygiène","Boulangerie","Surgelés"],""],
+    ["L'alarme incendie sonne. Je sors par :",["La sortie de secours","La réserve","La cabine"],""],
+    ["Les tailles : après S, il y a :",["M","XS","XXL"],"XS, S, M, L, XL, XXL."],
+    ["Le client essaie les vêtements dans :",["La cabine d'essayage","La réserve","La vitrine"],""],
+    ["Le jean coûte 30 €. Soldes − 50 %. Il coûte :",["15 €","30 €","20 €"],"La moitié de 30 €, c'est 15 €."],
+    ["« 1 acheté = 1 offert ». Le produit coûte 2 €. Pour 2 produits, je paie :",["2 €","4 €","1 €"],""],
+    ["Prix : 5 €. Remise : − 1 €. Le client paie :",["4 €","6 €","5 €"],""],
+    ["Je travaille de 9 h à 12 h. Ça fait :",["3 heures","2 heures","12 heures"],""],
+    ["Je travaille de 8 h à 12 h et de 14 h à 16 h. Ça fait :",["6 heures","4 heures","8 heures"],"4 h + 2 h = 6 h."],
+    ["Au téléphone, la personne demandée n'est pas là. Je :",["Prends un message","Raccroche","Dis que je ne sais pas"],""],
+    ["Sur une fiche message, j'écris :",["Qui appelle, pour qui, le message et le numéro","Seulement mon prénom","Rien"],""],
+    ["Avant de toucher les produits frais, je :",["Me lave les mains","Touche mon téléphone","Mange un bonbon"],""],
+    ["Je mange mon repas :",["Pendant la pause, en salle de pause","Dans le rayon","À la caisse"],""],
+    ["Je fais tomber un pot qui se casse. D'abord, je :",["Préviens pour que personne ne glisse","Pars","Pousse les morceaux sous l'étagère"],""],
+    ["Le client paie par carte sur :",["Le terminal","Le transpalette","L'étal"],""],
+    ["Pour un paquet cadeau, d'abord :",["J'enlève l'étiquette de prix","Je mets le ruban","Je donne le paquet"],""],
+    ["Le soir, avant de partir, je :",["Range mon rayon et je dis au revoir","Pars sans rien dire","Laisse les cartons dans l'allée"],""],
+    ["Quand le magasin ouvre, je dis aux premiers clients :",["Bonjour !","Allez-vous-en !","Rien"],""],
+  ];
+  const Q=pickN(POOL,12).map(x=>({q:x[0], opts:x[1], good:0, explain:x[2]}));
+  app.innerHTML=`<div class="panel">${actHeader("Le grand défi","🏆")}${consigne("C'est le grand défi du niveau 4 ! 12 questions sur tout ce que tu as appris. Bonne chance !")}<div id="qz"></div></div>`;
+  runQuiz(document.getElementById("qz"), Q, (s,d)=>finish("defi",s,Q.length,d));
+}
+
+/* ================= Diplôme ================= */
+function screenDiplome(){
+  const st=state.students[cur]; window.scrollTo(0,0);
+  app.innerHTML=`<div class="panel" style="text-align:center;border:10px double var(--teal)">
+    <div style="font-size:4rem">🎓</div><h2>Diplôme de l'équipier confirmé – Niveau 4</h2><p>Bravo à</p>
+    <p style="font-family:var(--title);font-size:2.4rem;margin:0">${esc(st.name)}</p>
+    <p>qui a terminé les ${ACTS.length} activités du magasin.</p>
+    <p>Le ${new Date().toLocaleDateString("fr-FR")}</p><p><b>${esc(NOM_ENSEIGNANTE)}</b></p>
+    <p class="row noprint" style="justify-content:center"><button class="btn yellow" onclick="window.print()">🖨 Imprimer</button><button class="btn ghost" onclick="screenHome()">⬅ Retour au magasin</button></p></div>`;
+  burst(); speak("Bravo "+st.name+" ! Tu as ton diplôme d'équipier confirmé, niveau 4.");
+}
+
+/* ================= ZONE 4 : coloriage ================= */
+const DRAWINGS = {
+  col_vetements: { t:"La boutique de vêtements", svg:`
+    <rect data-r="mur" x="0" y="0" width="400" height="262"/>
+    <rect data-r="sol" x="0" y="262" width="400" height="58"/>
+    <rect data-r="panneau" x="20" y="12" width="250" height="36" rx="8"/>
+    <text class="svgline" x="145" y="37" text-anchor="middle" font-family="Verdana" font-size="17" font-weight="bold">VÊTEMENTS</text>
+    <rect data-r="pied1" x="38" y="86" width="8" height="170"/>
+    <rect data-r="pied2" x="254" y="86" width="8" height="170"/>
+    <rect data-r="base" x="28" y="254" width="244" height="8"/>
+    <rect data-r="barre" x="28" y="78" width="244" height="8"/>
+    <path class="svgline" d="M85 86 v12 M170 86 v12 M240 86 v12" stroke="#222" stroke-width="2.5" fill="none"/>
+    <path data-r="teeshirt" d="M60 100 h50 l20 20 l-12 12 l-10 -10 v70 h-46 v-70 l-10 10 l-12 -12 z"/>
+    <rect data-r="etiquette" x="94" y="160" width="14" height="12"/>
+    <path data-r="robe" d="M160 100 h20 l6 22 l20 82 h-72 l20 -82 z"/>
+    <path data-r="pantalon" d="M218 100 h44 l4 110 h-20 l-6 -72 l-6 72 h-20 z"/>
+    <rect data-r="cabine" x="292" y="60" width="92" height="200"/>
+    <rect class="svgline" x="292" y="66" width="92" height="4" fill="#222"/>
+    <path data-r="rideau" d="M298 72 q10 90 0 186 h80 q-10 -90 0 -186 z"/>
+    <text class="svgline" x="338" y="54" text-anchor="middle" font-family="Verdana" font-size="11" font-weight="bold">CABINE</text>` },
+  col_boulangerie: { t:"La boulangerie", svg:`
+    <rect data-r="mur" x="0" y="0" width="400" height="262"/>
+    <rect data-r="sol" x="0" y="262" width="400" height="58"/>
+    <rect data-r="enseigne" x="90" y="10" width="220" height="36" rx="8"/>
+    <text class="svgline" x="200" y="35" text-anchor="middle" font-family="Verdana" font-size="17" font-weight="bold">BOULANGERIE</text>
+    <ellipse data-r="baguette1" cx="90" cy="70" rx="44" ry="7" transform="rotate(-6 90 70)"/>
+    <ellipse data-r="baguette2" cx="190" cy="70" rx="44" ry="7" transform="rotate(5 190 70)"/>
+    <ellipse data-r="baguette3" cx="300" cy="70" rx="44" ry="7" transform="rotate(-4 300 70)"/>
+    <rect data-r="etagere1" x="30" y="80" width="340" height="10"/>
+    <circle data-r="pain1" cx="70" cy="126" r="16"/><circle data-r="pain2" cx="112" cy="126" r="16"/><circle data-r="pain3" cx="154" cy="126" r="16"/>
+    <path data-r="croissant1" d="M200 140 q20 -36 44 0 q-22 -14 -44 0 z"/>
+    <path data-r="croissant2" d="M252 140 q20 -36 44 0 q-22 -14 -44 0 z"/>
+    <circle data-r="brioche1" cx="332" cy="130" r="13"/><circle data-r="brioche2" cx="332" cy="114" r="8"/>
+    <rect data-r="etagere2" x="30" y="142" width="340" height="10"/>
+    <rect data-r="vitrine" x="40" y="168" width="230" height="40"/>
+    <rect data-r="gateau" x="60" y="182" width="36" height="24"/>
+    <rect data-r="creme" x="64" y="174" width="28" height="8"/>
+    <circle data-r="cerise" cx="78" cy="170" r="5"/>
+    <ellipse data-r="tarte" cx="150" cy="196" rx="28" ry="9"/>
+    <circle data-r="macaron1" cx="215" cy="196" r="9"/><circle data-r="macaron2" cx="240" cy="196" r="9"/>
+    <rect data-r="caisse" x="290" y="170" width="64" height="38" rx="5"/>
+    <rect data-r="comptoir" x="30" y="208" width="340" height="54"/>` }
+};
+function drawingSVG(id, fills){
+  const tmp=document.createElement("div");
+  tmp.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320">${DRAWINGS[id].svg}</svg>`;
+  tmp.querySelectorAll("[data-r]").forEach(el=>{ el.setAttribute("fill",(fills||{})[el.dataset.r]||"#ffffff"); el.setAttribute("stroke","#222"); el.setAttribute("stroke-width","2.5"); });
+  return tmp.innerHTML;
+}
+function actColor(id){
+  const st=state.students[cur]; const fills = Object.assign({}, st.colors[id]||{});
+  const pal=[["#E5483B","rouge"],["#F28C28","orange"],["#FFD43B","jaune"],["#9BD770","vert clair"],["#1F8A4C","vert"],["#8FD3F4","bleu ciel"],["#3B7DD8","bleu"],["#7A4FB5","violet"],["#F4A6C6","rose"],["#8A5A3B","marron"],["#9AA5A8","gris"],["#222222","noir"],["#ffffff","blanc (gomme)"]];
+  let color=pal[0][0];
+  app.innerHTML = `<div class="panel">${actHeader("Coloriage : "+DRAWINGS[id].t, id==="col_shop"?"🏪":"🎨")}
+    ${consigne("Choisis une couleur, puis clique sur une partie du dessin pour la colorier. Ton coloriage est enregistré.")}
+    <div class="palette">${pal.map((p,i)=>`<button class="pcol ${i===0?"sel":""}" data-c="${p[0]}" data-say="${p[1]}" style="background:${p[0]}" aria-label="${p[1]}"></button>`).join("")}</div>
+    <div class="colorbox" id="cb">${drawingSVG(id,fills)}</div>
+    <p class="row" style="justify-content:center;margin-top:16px"><button class="btn yellow" id="fin">✅ J'ai fini mon coloriage</button><button class="btn ghost small" id="clr">🧽 Tout effacer</button></p></div>`;
+  const persist=()=>{ st.colors[id]=fills; save(false); };
+  app.querySelectorAll(".pcol").forEach(b=>b.addEventListener("click",()=>{ color=b.dataset.c; app.querySelectorAll(".pcol").forEach(x=>x.classList.toggle("sel",x===b)); }));
+  const bindSvg=()=>document.querySelectorAll("#cb [data-r]").forEach(el=>el.addEventListener("click",()=>{ el.setAttribute("fill",color); fills[el.dataset.r]=color; persist(); }));
+  bindSvg();
+  document.getElementById("clr").onclick=()=>{ if(!confirm("Tout effacer ?")) return; for(const k in fills) delete fills[k]; persist(); document.getElementById("cb").innerHTML=drawingSVG(id,fills); bindSvg(); };
+  document.getElementById("fin").onclick=()=>{ persist(); finish(id,1,1,[`${Object.keys(fills).length} zones coloriées`],"Magnifique coloriage ! Il est enregistré."); };
+}
+
+/* ================= Sortie : avis ================= */
+function actAvis(){
+  const st=state.students[cur]; const a = Object.assign({humeur:"",prefere:"",plait:"",appris:""}, st.avis||{});
+  const pick=(group,val)=>{ a[group]=val; app.querySelectorAll(`[data-g="${group}"]`).forEach(b=>b.classList.toggle("sel", b.dataset.v===val)); };
+  app.innerHTML = `<div class="panel">${actHeader("Mon avis","📝")}
+    ${consigne("Dis-nous ce que tu as pensé de ta découverte.")}
+    <h3>Comment je me sens ? ${sayBtn("Comment je me sens ?")}</h3>
+    <div class="smileys">${["😀","🙂","😐","🙁"].map(e=>`<button class="smiley" data-g="humeur" data-v="${e}">${e}</button>`).join("")}</div>
+    <h3 style="margin-top:20px">Mon jeu préféré ${sayBtn("Mon jeu préféré")}</h3>
+    <div class="row">${ACTS.filter(x=>x.id!=="avis").map(x=>`<button class="chip" data-g="prefere" data-v="${esc(x.lbl)}">${x.ico} ${x.lbl}</button>`).join("")}</div>
+    <h3 style="margin-top:20px">Ce métier me plaît ? ${sayBtn("Ce métier me plaît ?")}</h3>
+    <div class="row">${["👍 Oui","🤏 Un peu","👎 Non"].map(v=>`<button class="chip" data-g="plait" data-v="${v}">${v}</button>`).join("")}</div>
+    <h3 style="margin-top:20px"><label for="ap">Ce que j'ai appris (un mot ou une phrase)</label> ${sayBtn("Ce que j'ai appris. Tu peux écrire un mot ou une phrase.")}</h3>
+    <textarea id="ap">${esc(a.appris)}</textarea>
+    <p><button class="btn yellow" id="sv">💾 J'enregistre mon avis</button></p><div id="fb"></div></div>`;
+  app.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>pick(b.dataset.g,b.dataset.v));
+  ["humeur","prefere","plait"].forEach(g=>a[g]&&pick(g,a[g]));
+  document.getElementById("sv").onclick=()=>{
+    a.appris=document.getElementById("ap").value.trim();
+    if(!a.humeur||!a.prefere||!a.plait){ document.getElementById("fb").innerHTML=`<div class="feedback bad">Réponds aux 3 premières questions 🙂</div>`; return; }
+    a.date=new Date().toLocaleString("fr-FR"); st.avis=a; save(); burst();
+    app.innerHTML=`<div class="panel result"><h2>Merci ${esc(st.name)} ! 💛</h2><p>Ton avis est enregistré.</p><button class="btn yellow" onclick="screenHome()">🛒 Retour au magasin</button></div>`;
+  };
+}
+
+/* ================= Espace enseignante (calque, accessible à tout moment) ================= */
+let tSel=null;
+const TL=()=>document.getElementById("tlayer");
+function closeTeacher(){ TL().hidden=true; TL().innerHTML=""; document.body.classList.remove("tl"); }
+function openTeacher(){
+  const L=TL(); L.hidden=false; document.body.classList.add("tl");
+  L.innerHTML=`<div class="panel tch" style="max-width:520px"><h2>🔒 Espace enseignante</h2>
+    <p>Le travail de l'élève n'est pas interrompu.</p>
+    <p><label for="cd">Code d'accès</label><br><input type="password" id="cd" autocomplete="off"> <button class="btn" id="go">Entrer</button></p>
+    <div id="cfb"></div><button class="btn ghost small" onclick="closeTeacher()">✖ Fermer</button></div>`;
+  const go=()=>{ if(document.getElementById("cd").value===CODE_PAR_DEFAUT){ tSel=cur||tSel; renderTeacher(); } else document.getElementById("cfb").innerHTML=`<div class="feedback bad">Code incorrect.</div>`; };
+  document.getElementById("go").onclick=go; document.getElementById("cd").onkeydown=e=>{ if(e.key==="Enter") go(); };
+  document.getElementById("cd").focus();
+}
+function renderTeacher(){
+  state = Object.assign(state, load()); // relit la dernière sauvegarde
+  const S=state.students, ids=Object.keys(S);
+  if(!tSel||!S[tSel]) tSel=ids[0]||null;
+  const total=k=>ACTS.filter(a=>isDone(S[k],a)).length;
+  const enCours=k=>Object.keys(S[k].progress||{}).map(id=>ACTS.find(a=>a.id===id)?.lbl).filter(Boolean).join(", ")||"–";
+  const cell=(st,a)=>{
+    let out="";
+    const p=(st.progress||{})[a.id];
+    if(a.id==="avis"){ const v=st.avis; out = v?`${v.humeur} ${esc(v.plait)}<br><small>${esc(v.date)}</small>`:"–"; }
+    else if(a.id==="monmag"){ const r=st.results[a.id]; out = st.magasin ? magHTML(st.magasin,true)+(r?`<br><small>${esc(r.date)}</small>`:"") : "–"; }
+    else if(a.z==="z4"){ const r=st.results[a.id]; out = (st.colors[a.id]?drawingSVG(a.id,st.colors[a.id]):"–") + (r?`<br><small>Terminé – ${esc(r.date)}</small>`:(st.colors[a.id]?"<br><small>En cours</small>":"")); }
+    else { const r=st.results[a.id];
+      if(!r) out="–";
+      else if(a.id==="badge") out=`${st.badge?st.badge.emoji:""} Créé<br><small>${esc(r.date)}</small>`;
+      else out=`<b>${r.score}/${r.max}</b> (meilleur : ${r.best})<br><small>${r.attempts} essai(s) terminé(s) – ${esc(r.date)}</small>
+        <details><summary>Détail du dernier essai</summary><ul>${r.details.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></details>`; }
+    if(p && a.z!=="z4") out+=`<div class="live">⏳ En cours (${p.details.length} réponse(s)) – ${esc(p.date)}
+      <details><summary>Voir</summary><ul>${p.details.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></details></div>`;
+    return out; };
+  const st = tSel ? S[tSel] : null;
+  TL().innerHTML=`<div class="panel tch">
+    <div class="row" style="justify-content:space-between"><h2>📋 Suivi des élèves</h2>
+      <div class="row noprint"><button class="btn small" onclick="renderTeacher()">🔄 Actualiser</button><button class="btn ghost small" onclick="closeTeacher()">✖ Fermer et revenir</button></div></div>
+    ${ids.length===0?`<p>Aucun élève n'a encore commencé.</p>`:`
+    <div class="tablebox"><table><thead><tr><th>Élève</th><th>Jeux terminés</th><th>En cours</th></tr></thead><tbody>
+      ${ids.map(k=>`<tr><td><button class="stu ${k===tSel?"sel":""}" onclick="tSel='${k}';renderTeacher()">${esc(S[k].name)}</button>${k===cur?" <small>(connecté)</small>":""}</td><td>${total(k)} / ${ACTS.length}</td><td>${esc(enCours(k))}</td></tr>`).join("")}
+    </tbody></table></div>
+    <h3 style="margin-top:22px">Détail : ${esc(st.name)}</h3>
+    <div class="tablebox"><table><thead><tr><th>Activité</th><th>Résultat</th></tr></thead><tbody>
+      ${ZONES.map(z=>`<tr class="z"><td colspan="2">${z.t}</td></tr>`+ACTS.filter(a=>a.z===z.id).map(a=>`<tr><td>${a.ico} ${a.lbl}</td><td>${cell(st,a)}</td></tr>`).join("")).join("")}
+      <tr><td>Jeu préféré</td><td>${esc(st.avis?.prefere||"–")}</td></tr>
+      <tr><td>Ce que j'ai appris</td><td>${esc(st.avis?.appris||"–")}</td></tr>
+    </tbody></table></div>`}
+    <div class="noprint">
+      <h3 style="margin-top:24px">Actions</h3>
+      <div class="row">
+        <button class="btn small" onclick="window.print()">🖨 Imprimer</button>
+        <button class="btn small" onclick="exportData()">⬇ Télécharger une sauvegarde</button>
+        ${st?`<button class="btn ghost small" onclick="resetStudent('${tSel}')">♻ Supprimer ${esc(st.name)}</button>`:""}
+      </div>
+      <p><button class="btn ghost small" onclick="speak('Test de la voix. Bonjour, bienvenue dans le magasin.')">🔊 Tester la voix de l'ordinateur</button></p>
+    </div></div>`;
+}
+function resetStudent(k){
+  if(!confirm("Supprimer tout le travail de "+state.students[k].name+" ? Cette action est définitive.")) return;
+  delete state.students[k]; save(); tSel=null;
+  if(k===cur){ closeTeacher(); screenLogin(); } else renderTeacher();
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="suivi-immersion-EPC-"+new Date().toISOString().slice(0,10)+".json"; a.click();
+}
+
+drawMute();
+screenLogin();
+</script>
+</body>
+</html>
